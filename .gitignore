@@ -1,0 +1,31 @@
+# Ambiente Virtual do Poetry (se configurado para criar localmente como .venv)
+.venv/
+
+# Arquivos compilados e caches do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.tox/
+pip-wheel-metadata/
+build/
+dist/
+*.egg-info/
+
+
+# Banco de dados SQLite (manteremos fora do Git por enquanto)
+*.sqlite3
+instance/
+
+# Arquivos de configuração de editor (opcional, mas bom ter)
+.vscode/
+.idea/
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de log
+*.log

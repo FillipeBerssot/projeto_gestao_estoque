@@ -1,0 +1,110 @@
+{% extends "base.html" %} {# Herda a estrutura do base.html #}
+
+{% block title %}{{ title }}{% endblock %} {# Usa a variável 'title' passada pela rota #}
+
+{% block content %}
+  <h2>{{ title }}</h2>
+
+  {# O action pode ser deixado em branco para submeter à mesma URL ou usar url_for #}
+  <form method="POST" action="{{ url_for('purchases.add_purchase') }}">
+    {{ form.hidden_tag() }} {# IMPORTANTE: Para proteção CSRF do Flask-WTF #}
+
+    <p>
+      {{ form.product_name.label }}<br>
+      {{ form.product_name(size=32, class="form-control") }}<br> {# Adicionei class="form-control" como exemplo de estilização #}
+      {% if form.product_name.errors %}
+        <ul class="errors">
+        {% for error in form.product_name.errors %}
+          <li><span style="color: red;">{{ error }}</span></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </p>
+
+    <p>
+      {{ form.purchase_date.label }}<br>
+      {{ form.purchase_date(class="form-control") }}<br>
+      {% if form.purchase_date.errors %}
+        <ul class="errors">
+        {% for error in form.purchase_date.errors %}
+          <li><span style="color: red;">{{ error }}</span></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </p>
+
+    <p>
+      {{ form.value.label }}<br>
+      {{ form.value(size=10, class="form-control") }}<br>
+      {% if form.value.errors %}
+        <ul class="errors">
+        {% for error in form.value.errors %}
+          <li><span style="color: red;">{{ error }}</span></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </p>
+
+    <p>
+      {{ form.quantity.label }}<br>
+      {{ form.quantity(size=10, class="form-control") }}<br>
+      {% if form.quantity.errors %}
+        <ul class="errors">
+        {% for error in form.quantity.errors %}
+          <li><span style="color: red;">{{ error }}</span></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </p>
+
+    <p>
+      {{ form.unit.label }}<br>
+      {{ form.unit(size=20, class="form-control") }}<br>
+      {% if form.unit.errors %}
+        <ul class="errors">
+        {% for error in form.unit.errors %}
+          <li><span style="color: red;">{{ error }}</span></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </p>
+
+    <p>
+      {{ form.location.label }}<br>
+      {{ form.location(size=32, class="form-control") }}<br>
+      {% if form.location.errors %}
+        <ul class="errors">
+        {% for error in form.location.errors %}
+          <li><span style="color: red;">{{ error }}</span></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </p>
+
+    <p>
+      {{ form.brand.label }}<br>
+      {{ form.brand(size=32, class="form-control") }}<br>
+      {% if form.brand.errors %}
+        <ul class="errors">
+        {% for error in form.brand.errors %}
+          <li><span style="color: red;">{{ error }}</span></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </p>
+
+    <p>
+      {{ form.notes.label }}<br>
+      {{ form.notes(rows=4, cols=30, class="form-control") }}<br>
+      {% if form.notes.errors %}
+        <ul class="errors">
+        {% for error in form.notes.errors %}
+          <li><span style="color: red;">{{ error }}</span></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </p>
+
+    <p>{{ form.submit(class="btn btn-primary") }}</p> {# Renderiza o botão de submit, também com exemplo de classe #}
+  </form>
+{% endblock %}

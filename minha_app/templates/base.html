@@ -53,8 +53,10 @@
     <body>
 
         <nav>
-            <a href="{{ url_for('main.index') if 'main.index' in request.endpoint else '#'}}">Home</a> |
+                <a href="{{ url_for('main.index') if 'main.index' in request.endpoint else '#'}}">Home</a> |
             {% if current_user.is_authenticated %}
+
+                <a href="{{ url_for('purchases.add_purchase') }}">Adicionar Compra</a> |
 
                 <a href="{{ url_for('auth.logout') }}">Sair</a>
             {% else %}

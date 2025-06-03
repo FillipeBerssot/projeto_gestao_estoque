@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, date, timezone
 from . import db 
 
 # ---- Modelo de Usuario ----
@@ -8,6 +9,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
+    purchases = db.relationship('Purchase', backref='buyer', lazy='dynamic')
 
     # Método para definir a senha(HASH)
     def set_password(self, password):
@@ -19,3 +21,19 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
+# ---- Modelo de Produtos (Compras) ----
+class Purchase(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_name = db.Column(db.String(100), nullable=False)
+    purchase_date = db.Column(db.Date, nullable=False, default=date.today)
+    value = db.Column(db.Float, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    unit = db.Column(db.Float(50), nullable=False)
+    location = db.Column(db.String(100), nullable=True)
+    brand = db.Column(db.String(100), nullable=True)
+    notes = db.Column(db.Text, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Purchase {self.product_name} -R${self.value:.2f}>'

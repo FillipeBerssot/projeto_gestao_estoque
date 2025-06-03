@@ -60,7 +60,7 @@
             {% else %}
 
                 <a href="{{ url_for('auth.register') }}">Registrar</a> |
-                <a href="#">Login (em breve)</a>
+                <a href="{{ url_for('auth.login') }}">Login</a>
             {% endif %}
         </nav>
 

@@ -1,0 +1,28 @@
+{% extends "base.html" %} {# Herda do template base #}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h2>Login</h2>
+    <form method="POST" action="{{ url_for('auth.login') }}">
+        <div>
+            <label for="username">Nome de Usuário</label><br>
+            <input type="text" id="username" name="username" value="{{ request.form.username if request.form.username else ''}}" required>
+        </div>
+
+        <br>
+
+        <div>
+            <label for="password">Senha:</label><br>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <br>
+
+        <div>
+            <button type="submit">Entrar</button>
+        </div>
+
+    </form>
+    <p>Não tem uma conta? <a href="{{ url_for('auth.register') }}">Registre-se aqui</a>.</p>
+{% endblock %}

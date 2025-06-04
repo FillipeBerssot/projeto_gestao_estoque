@@ -5,13 +5,22 @@
 {% block content %}
     <h2>{{ title }}</h2>
 
-    {# Formulário de Filtro/Busca por Nome #}
-    <form method="GET" action="{{ url_for('purchases.list_purchases')}}" style="margin-bottom: 20px;">
-        <label for="search_product_name">Buscar por Nome do Produto</label>
-        <input type="text" id="search_product_name" name="search_product_name" value="{{ request.args.get('search_product_name', '') }}">
-        <button type="submit">Buscar</button>
-        {% if request.args.get('search_product_name', '') %}
-            <a href="{{ url_for('purchases.list_purchases') }}" style="margin-left: 10px;">Limpar Busca</a>
+    {# Formulário de Filtro/Busca #}
+    <form method="GET" action="{{ url_for('purchases.list_purchases')}}" style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+        <div style="display: inline-block; margin-right: 15px;">
+            <label for="search_product_name">Buscar por Nome do Produto:</label><br>
+            <input type="text" id="search_product_name" name="search_product_name" value="{{ search_term or '' }}">
+        </div>
+
+        {# NOVO CAMPO DE FILTRO POR DATA ESPECÍFICA #}
+        <div style="display: inline-block; margin-right: 15px;">
+            <label for="filter_date">Filtrar por Data Específica:</label><br>
+            <input type="date" id="filter_date" name="filter_date" value="{{ filter_date or ''}}">
+        </div>
+
+        <button type="submit" style="vertical-align: bottom;">Buscar / Filtrar</button>
+        {% if search_term or filter_date_str %}
+            <a href="{{ url_for('purchases.list_purchases') }}" style="margin-left: 10px; vertical-align: bottom;">Limpar Filtros</a>
         {% endif %}
     </form>
 
@@ -56,7 +65,7 @@
         <ul class="pagination" style="list-style: none; display: flex; padding: 0;">
 
             <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}" style="margin-right: 5px;">
-                <a class="page-link" href="{{ url_for('purchases.list_purchases', page=pagination.prev_num, search_product_name=search_term if search_term else None) if pagination.has_prev else '#_prev' }}">
+                <a class="page-link" href="{{ url_for('purchases.list_purchases', page=pagination.prev_num, search_product_name=search_term if search_term else None, filter_date=filter_date_str if filter_date_str else None) if pagination.has_prev else '#_prev' }}">
                     &laquo; Anterior
                 </a>
             </li>
@@ -66,11 +75,11 @@
                 {% if p_num %}
                     {% if pagination.page == p_num %}
                     <li class="page-item active" style="margin-right: 5px;">
-                        <a class="page-link" href="{{ url_for('purchases.list_purchases', page=p_num, search_product_name=search_term if search_term else None) }}">{{ p_num }}</a>
+                        <a class="page-link" href="{{ url_for('purchases.list_purchases', page=p_num, search_product_name=search_term if search_term else None, filter_date=filter_date_str if filter_date_str else None) }}">{{ p_num }}</a>
                     </li>
                 {% else %} {# Adicionando o else para as páginas não ativas #}
                     <li class="page-item" style="margin-right: 5px;">
-                        <a class="page-link" href="{{ url_for('purchases.list_purchases', page=p_num, search_product_name=search_term if search_term else None) }}">{{ p_num }}</a>
+                        <a class="page-link" href="{{ url_for('purchases.list_purchases', page=p_num, search_product_name=search_term if search_term else None, filter_date=filter_date_str if filter_date_str else None) }}">{{ p_num }}</a>
                     </li>
                     {% endif %}
             
@@ -81,7 +90,7 @@
 
             {# Link para a Próxima Página #}
             <li class="page-item {% if not pagination.has_next %}disabled{% endif %}" style="margin-left: 5px;">
-                <a class="page-link" href="{{ url_for('purchases.list_purchases', page=pagination.next_num, search_product_name=search_term if search_term else None) if pagination.has_next else '#_next' }}">
+                <a class="page-link" href="{{ url_for('purchases.list_purchases', page=pagination.next_num, search_product_name=search_term if search_term else None, filter_date=filter_date_str if filter_date_str else None) if pagination.has_next else '#_next' }}">
                     Próxima &raquo;
                 </a>
             </li>

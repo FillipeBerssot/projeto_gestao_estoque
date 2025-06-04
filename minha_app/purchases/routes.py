@@ -4,6 +4,7 @@ from . import purchases_bp
 from .forms import PurchaseForm
 from ..models import Purchase
 from .. import db
+from datetime import date, datetime
 
 @purchases_bp.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -38,11 +39,22 @@ def list_purchases():
     PER_PAGE = 10
 
     search_term = request.args.get('search_product_name', None)
+    filter_date_str = request.args.get('filter_date', None)
+
+    specific_date_to_filter = None
 
     query = current_user.purchases.order_by(Purchase.purchase_date.desc())
 
     if search_term:
         query = query.filter(Purchase.product_name.ilike(f'%{search_term}%'))
+
+    if filter_date_str:
+        try:
+            specific_date_to_filter = datetime.strptime(filter_date_str, '%Y-%m-%d').date()
+            query = query.filter(Purchase.purchase_date == specific_date_to_filter)
+        except ValueError:
+            flash('Formato de data para filtro inválido. Use AAAA-MM-DD', 'warning')
+            filter_date_str = None
 
     pagination = query.paginate(
         page=page,
@@ -56,4 +68,5 @@ def list_purchases():
                            title='Minhas Compras',
                            purchases=user_purchases_on_page,
                            pagination=pagination,
-                           search_term=search_term)
+                           search_term=search_term,
+                           filter_date_str=filter_date_str)

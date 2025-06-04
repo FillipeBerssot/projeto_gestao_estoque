@@ -70,3 +70,33 @@ def list_purchases():
                            pagination=pagination,
                            search_term=search_term,
                            filter_date_str=filter_date_str)
+
+@purchases_bp.route('/edit/<int:purchase_id>', methods=['GET', 'POST'])
+@login_required
+def edit_purchase(purchase_id):
+    purchase_to_edit = Purchase.query.get_or_404(purchase_id)
+
+    if purchase_to_edit.buyer != current_user:
+        flash('Operação não permitida. Você só pode editar suas próprias compras.', 'danger')
+        return redirect(url_for('purchases.list_purchases'))
+    
+    form = PurchaseForm(obj=purchase_to_edit if request.method == 'GET' else None)
+
+    if form.validate_on_submit():
+        purchase_to_edit.product_name = form.product_name.data
+        purchase_to_edit.purchase_date = form.purchase_date.data
+        purchase_to_edit.value = form.value.data
+        purchase_to_edit.quantity = form.quantity.data
+        purchase_to_edit.unit = form.unit.data
+        purchase_to_edit.location = form.location.data
+        purchase_to_edit.brand = form.brand.data
+        purchase_to_edit.notes = form.notes.data
+
+        db.session.commit()
+        flash('Compra atualizada com sucesso!', 'success')
+        return redirect(url_for('purchases.list_purchases'))
+    
+    return render_template('edit_purchase.html',
+                           title='Editar Compra',
+                           form=form,
+                           purchase_id=purchase_id)

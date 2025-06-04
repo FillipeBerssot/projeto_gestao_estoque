@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+
+    {# A action do formulário agora aponta para a rota de edição e inclui o purchase_id #}
+    <form method="POST" action="{{ url_for('purchases.edit_purchase', purchase_id=purchase_id) }}">
+      {{ form.hidden_tag() }} {# Proteção CSRF #}
+  
+      {# Renderizando os campos do formulário (igual ao add_purchase.html) #}
+      <p>
+        {{ form.product_name.label }}<br>
+        {{ form.product_name(size=32, class="form-control") }}<br>
+        {% if form.product_name.errors %}
+          <ul class="errors">{% for error in form.product_name.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
+        {% endif %}
+      </p>
+      <p>
+        {{ form.purchase_date.label }}<br>
+        {{ form.purchase_date(class="form-control") }}<br>
+        {% if form.purchase_date.errors %}
+          <ul class="errors">{% for error in form.purchase_date.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
+        {% endif %}
+      </p>
+      <p>
+        {{ form.value.label }}<br>
+        {{ form.value(size=10, class="form-control") }}<br>
+        {% if form.value.errors %}
+          <ul class="errors">{% for error in form.value.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
+        {% endif %}
+      </p>
+      <p>
+        {{ form.quantity.label }}<br>
+        {{ form.quantity(size=10, class="form-control") }}<br>
+        {% if form.quantity.errors %}
+          <ul class="errors">{% for error in form.quantity.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
+        {% endif %}
+      </p>
+      <p>
+        {{ form.unit.label }}<br>
+        {{ form.unit(size=20, class="form-control") }}<br>
+        {% if form.unit.errors %}
+          <ul class="errors">{% for error in form.unit.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
+        {% endif %}
+      </p>
+      <p>
+        {{ form.location.label }}<br>
+        {{ form.location(size=32, class="form-control") }}<br>
+        {% if form.location.errors %}
+          <ul class="errors">{% for error in form.location.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
+        {% endif %}
+      </p>
+      <p>
+        {{ form.brand.label }}<br>
+        {{ form.brand(size=32, class="form-control") }}<br>
+        {% if form.brand.errors %}
+          <ul class="errors">{% for error in form.brand.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
+        {% endif %}
+      </p>        
+      <p>
+        {{ form.notes.label }}<br>
+        {{ form.notes(rows=4, cols=30, class="form-control") }}<br>
+        {% if form.notes.errors %}
+          <ul class="errors">{% for error in form.notes.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
+        {% endif %}
+      </p>
+      {# Mudamos o texto do botão de submit #}
+      <p>{{ form.submit(value="Salvar Alterações", class="btn btn-primary") }}</p>
+    </form>
+    <br>
+    <p><a href="{{ url_for('purchases.list_purchases') }}">Cancelar e Voltar para a Lista</a></p>
+  {% endblock %}

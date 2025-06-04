@@ -58,10 +58,14 @@
 
                 <a href="{{ url_for('purchases.add_purchase') }}">Adicionar Compra</a> |
 
+                <a href="{{ url_for('purchases.list_purchases') }}">Minhas Compras</a> |
+
                 <a href="{{ url_for('auth.logout') }}">Sair</a>
+
             {% else %}
 
                 <a href="{{ url_for('auth.register') }}">Registrar</a> |
+                
                 <a href="{{ url_for('auth.login') }}">Login</a>
             {% endif %}
         </nav>

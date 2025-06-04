@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+
+    {# Formulário de Filtro/Busca por Nome #}
+    <form method="GET" action="{{ url_for('purchases.list_purchases')}}" style="margin-bottom: 20px;">
+        <label for="search_product_name">Buscar por Nome do Produto</label>
+        <input type="text" id="search_product_name" name="search_product_name" value="{{ request.args.get('search_product_name', '') }}">
+        <button type="submit">Buscar</button>
+        {% if request.args.get('search_product_name', '') %}
+            <a href="{{ url_for('purchases.list_purchases') }}" style="margin-left: 10px;">Limpar Busca</a>
+        {% endif %}
+    </form>
+
+    {% if purchases %}
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Produto</th>
+                <th>Marca</th>
+                <th>Quantidade</th>
+                <th>Unidade</th>
+                <th>Valor (R$)</th>
+                <th>Local</th>
+                <th>Observações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for purchase in purchases %}
+            <tr>
+                <td>{{ purchase.purchase_date.strftime('%d/%m/%Y') if purchase.purchase_date else 'N/A' }}</td>
+                <td>{{ purchase.product_name }}</td>
+                <td>{{ purchase.brand if purchase.brand else '-' }}</td>
+                <td>{{ purchase.quantity }}</td>
+                <td>{{ purchase.unit }}</td>
+                <td>{{ "%.2f"|format (purchase.value) }}</td>
+                <td>{{ purchase.location if purchase.location else '-' }}</td>
+                <td>{{ purchase.notes if purchase.notes else '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <p>Você ainda não registrou nenhuma compra. <a href="{{ url_for('purchases.add_purchase') }}">Adicionar agora?</a></p>
+{% endif %}
+
+    {# Paginação #}
+    {% if pagination %}
+    <nav aria-label="Paginação das Compras">
+        <ul class="pagination" style="list-style: none; display: flex; padding: 0;">
+
+            <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}" style="margin-right: 5px;">
+                <a class="page-link" href="{{ url_for('purchases.list_purchases', page=pagination.prev_num, search_product_name=search_term if search_term else None) if pagination.has_prev else '#_prev' }}">
+                    &laquo; Anterior
+                </a>
+            </li>
+
+            {# Links para os Números das Páginas #}
+            {% for p_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if p_num %}
+                    {% if pagination.page == p_num %}
+                    <li class="page-item active" style="margin-right: 5px;">
+                        <a class="page-link" href="{{ url_for('purchases.list_purchases', page=p_num, search_product_name=search_term if search_term else None) }}">{{ p_num }}</a>
+                    </li>
+                {% else %} {# Adicionando o else para as páginas não ativas #}
+                    <li class="page-item" style="margin-right: 5px;">
+                        <a class="page-link" href="{{ url_for('purchases.list_purchases', page=p_num, search_product_name=search_term if search_term else None) }}">{{ p_num }}</a>
+                    </li>
+                    {% endif %}
+            
+                {% else %}
+                    <li class="page-item disabled" style="margin-right: 5px;"><span class="page-link">...</span></li>
+                {% endif %}
+            {% endfor %}
+
+            {# Link para a Próxima Página #}
+            <li class="page-item {% if not pagination.has_next %}disabled{% endif %}" style="margin-left: 5px;">
+                <a class="page-link" href="{{ url_for('purchases.list_purchases', page=pagination.next_num, search_product_name=search_term if search_term else None) if pagination.has_next else '#_next' }}">
+                    Próxima &raquo;
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <p style="font-size: 0.9em;">
+        Mostrando página {{ pagination.page }} de {{ pagination.pages }}. Total de {{ pagination.total }} compras.
+    </p>
+    {% endif %}
+
+    <br>
+
+    <p><a href="{{ url_for('purchases.add_purchase') }}">Adicionar Nova Compra</a></p>
+{% endblock %}

@@ -32,11 +32,11 @@ def create_app():
     from .auth import auth_bp
     app.register_blueprint(auth_bp)
 
-    from .main import main_bp
-    app.register_blueprint(main_bp)
-
     from .purchases import purchases_bp
     app.register_blueprint(purchases_bp)
+
+    from .dashboard import dashboard_bp
+    app.register_blueprint(dashboard_bp)
 
     # Criar tabelas do banco de dados (apenas se não existirem)
     with app.app_context():

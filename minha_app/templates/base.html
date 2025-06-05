@@ -53,20 +53,20 @@
     <body>
 
         <nav>
-                <a href="{{ url_for('main.index') if 'main.index' in request.endpoint else '#'}}">Home</a> |
             {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard.view_dashboard') }}"><strong>Dashboard</strong></a> |
 
-                <a href="{{ url_for('purchases.add_purchase') }}">Adicionar Compra</a> |
+                <a href="{{ url_for('purchases.add_purchase') }}"><strong>Adicionar Compra</strong></a> |
 
-                <a href="{{ url_for('purchases.list_purchases') }}">Minhas Compras</a> |
+                <a href="{{ url_for('purchases.list_purchases') }}"><strong>Minhas Compras</strong></a> |
 
-                <a href="{{ url_for('auth.logout') }}">Sair</a>
+                <a href="{{ url_for('auth.logout') }}"><strong>Sair</strong></a>
 
             {% else %}
 
-                <a href="{{ url_for('auth.register') }}">Registrar</a> |
+                <a href="{{ url_for('auth.register') }}"><strong>Registrar</strong></a> |
                 
-                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.login') }}"><strong>Login</strong></a>
             {% endif %}
         </nav>
 

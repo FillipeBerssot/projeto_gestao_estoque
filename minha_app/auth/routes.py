@@ -61,7 +61,7 @@ def login():
             flash('Login bem-sucedido!', 'success')
 
             next_page = request.args.get('next')
-            return redirect(next_page or url_for('main.index'))
+            return redirect(next_page or url_for('dashboard.view_dashboard'))
         else:
             flash('Nome de usuário ou senha inválidos. Tente novamente.', 'danger')
 
@@ -72,4 +72,4 @@ def login():
 def logout():
     logout_user()
     flash('Voçê foi desconectado com sucesso!', 'info')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('dashboard.view_dashboard'))

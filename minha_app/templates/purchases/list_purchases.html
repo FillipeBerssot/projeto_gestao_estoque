@@ -60,8 +60,12 @@
     </table>
 
 {% else %}
-    <p>Nenhuma compra encontrada com os filtros atuais. {% if not search_term and filter_date_str %}<a href="{{ url_for('purchases.add_purchase') }}">Adicionar agora?</a>{% endif %}</p>
-    <p>Você ainda não registrou nenhuma compra. <a href="{{ url_for('purchases.add_purchase') }}">Adicionar agora?</a></p>
+    {% if search_term or filter_date_str %}
+        <p>Nenhuma compra encontrada com os filtros atuais que você aplicou.</p>
+        <p>Você pode tentar <a href="{{ url_for('purchases.list_purchases') }}">limpar os filtros</a> para ver todas as compras, ou <a href="{{ url_for('purchases.add_purchase') }}">adicionar uma nova compra</a>.</p>
+    {% else %}
+        <p>Você ainda não registrou nenhuma compra. Que tal <a href="{{ url_for('purchases.add_purchase') }}">adicionar sua primeira compra agora</a>?</p>    
+    {% endif %}
 {% endif %}
 
     {# Paginação #}

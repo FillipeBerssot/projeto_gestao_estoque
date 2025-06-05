@@ -100,3 +100,23 @@ def edit_purchase(purchase_id):
                            title='Editar Compra',
                            form=form,
                            purchase_id=purchase_id)
+
+@purchases_bp.route('/delete/<int:purchase_id>', methods=['POST'])
+@login_required
+def delete_purchase(purchase_id):
+    purchase_to_delete = Purchase.query.get_or_404(purchase_id)
+
+    if purchase_to_delete.buyer != current_user:
+        flash('Operação não permitida. Você só pode excluir suas próprias compras.', 'danger')
+        return redirect(url_for('purchases.list_purchases'))
+    
+    try:
+        db.session.delete(purchase_to_delete)
+        db.session.commit()
+        flash('Compra excluída com sucesso!', 'success')
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erro ao excluir a compra: {e}', 'danger')
+
+    return redirect(url_for('purchases.list_purchases'))

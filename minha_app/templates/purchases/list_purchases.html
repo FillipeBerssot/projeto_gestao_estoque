@@ -52,7 +52,38 @@
                 <td>{{ purchase.location if purchase.location else '-' }}</td>
                 <td>{{ purchase.notes if purchase.notes else '-' }}</td>
                 <td>
-                    <a href="{{ url_for('purchases.edit_purchase', purchase_id=purchase.id) }}">Editar</a>
+                    <form method="GET" 
+                        action="{{ url_for('purchases.edit_purchase', purchase_id=purchase.id) }}"
+                        style="display: inline; margin-right: 5px; vertical-align: middle;">
+                        <input type="submit" value="Editar"
+                            style="background-color: #28a745;
+                                color: white; 
+                                padding: 2px 5px; 
+                                text-decoration: none;
+                                border-radius: 3px; 
+                                display: inline-block;
+                                border: none;
+                                cursor: pointer;
+                                vertical-align: middle;
+                                margin-right: 5px;">
+                    </form>
+
+                    <form method="POST"
+                        action="{{ url_for('purchases.delete_purchase', purchase_id=purchase.id) }}" 
+                        style="display: inline; vertical-align: middle;" 
+                        onsubmit="return confirm('Tem certeza que deseja excluir esta compra? Ela será removida permanentemente.');">
+                        {{ form.hidden_tag() if form and form.hidden_tag }}
+                        <input type="submit" value="Excluir" 
+                                style="background-color: #dc3545; 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 2px 5px; 
+                                    text-decoration: none;
+                                    display: inline-block;
+                                    cursor: pointer;
+                                    vertical-align: middle;
+                                    border-radius: 3px;">
+                    </form>
                 </td>
             </tr>
             {% endfor %}

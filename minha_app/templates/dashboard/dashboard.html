@@ -6,18 +6,43 @@
     <h2>{{ title }}</h2>
     <p>Bem-vindo(a) de volta, {{ current_user.username }}!</p>
 
+    {# Formulario de Filtro por Mês/Ano #}
+    <form method="GET" action="{{ url_for('dashboard.view_dashboard') }}" style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+        <div style="display: inline-block; margin-right: 15px;">
+            <label for="filter_month">Mês:</label><br>
+            
+            <select name="filter_month" id="filter_month">
+                {% for month_num, month_name in month_options.items() %}
+                    <option value="{{ month_num }}" {% if month_num == selected_month %}selected{% endif %}>
+                        {{ month_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="display: inline-block; margin-right: 15px;">
+            <label for="filter_year">Ano:</label><br>
+
+            <input type="number" id="filter_year" name="filter_year" min="2000" max="2099" step="1" value="{{ selected_year }}">
+        </div>
+
+        <button type="submit" style="vertical-align: bottom;">Ver Período</button>
+    </form>
+    {# Fim do Formulario de Filtro #}
+
     <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
-        <h3>Resumo para {{ nome_mes_atual }}</h3>
-        <p><strong>Total Gasto: R$ {{ "%.2f"|format(total_gasto_mes_atual) }}</strong></p>
+        <h3>Resumo para {{ nome_mes_selecionado }}</h3>
+        <p><strong>Total Gasto: R$ {{ "%.2f"|format(total_gasto_mes) }}</strong></p>
     </div>
 
     {% if compras_mes_atual %}
-        <h4>Compras de {{ nome_mes_atual }}:</h4>
+        <h4>Compras de {{ nome_mes_selecionado }}:</h4>
         <table border="1" style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr>
                     <th>Data</th>
                     <th>Produto</th>
+                    <th>Quantidade</th>
                     <th>Valor (R$)</th>
                     <th>Detalhes</th>
                 </tr>
@@ -28,6 +53,7 @@
                     <tr>
                         <td>{{ compra.purchase_date.strftime('%d/%m/%Y') }}</td>
                         <td>{{ compra.product_name }}</td>
+                        <td>{{ compra.quantity }}</td>
                         <td>{{ "%.2f"|format(compra.value) }}</td>
                         <td><a href="{{ url_for('purchases.edit_purchase', purchase_id=compra.id) }}">Ver/Editar</a></td>
                     </tr>
@@ -35,8 +61,52 @@
             </tbody>
         </table>
     {% else %}
-        <p>Nenhuma compra registrada para {{ nome_mes_atual }}.</p>
+        <p>Nenhuma compra registrada para {{ nome_mes_selecionado }}.</p>
     {% endif %}
+
+    {# Bloco de Paginação #}
+    {% if pagination and pagination.pages > 1 %}
+        <nav aria-label="Paginação das compras do mês" style="margin-top: 15px;">
+            <ul class="pagination" style="list-style: none; display: flex; padding: 0;">
+
+                {# Link para a Página Anterior #}
+                <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}" style="margin-right: 5px;">
+                    <a href="{{ url_for('dashboard.view_dashboard', page=pagination.prev_num, filter_month=selected_month, filter_year=selected_year) if pagination.has_prev else '#_prev' }}">
+                        &laquo; Anterior
+                    </a>
+                </li>
+
+                {# Links para os Números das Páginas #}
+                {% for p_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if p_num %}
+                        {% if pagination.page == p_num %}
+                            <li class="page-item active" style="margin-right: 5px;">
+                                <a class="page-link" href="{{ url_for('dashboard.view_dashboard', page=p_num, filter_month=selected_month, filter_year=selected_year) }}">{{ p_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item" style="margin-right: 5px;">
+                                <a class="page-link" href="{{ url_for('dashboard.view_dashboard', page=p_num, filter_month=selected_month, filter_year=selected_year) }}">{{ p_num }}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled" style="margin-right: 5px;"><span class="page-link">...</span></li>
+                    {% endif %}
+                  {% endfor %}
+
+                  {# Link para proxima pagina #}
+                  <li class="page-item {% if not pagination.has_next %}disabled{% endif %}" style="margin-left: 5px;">
+                    <a class="page-link" href="{{ url_for('dashboard.view_dashboard', page=pagination.next_num, filter_month=selected_month, filter_year=selected_year) if pagination.has_next else '#_next' }}">
+                      Próxima &raquo;
+                    </a>
+                  </li>
+            </ul>
+        </nav>
+
+        <p style="font-size: 0.9em;">
+            Mostrando página {{ pagination.page }} de {{ pagination.pages }}. Total de {{ pagination.total }} compras neste período.
+        </p>
+    {% endif %}
+    {# FIM DO BLOCO DE PAGINAÇÃO #}
 
     <br>
 

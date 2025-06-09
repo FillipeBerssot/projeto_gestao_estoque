@@ -27,13 +27,13 @@
 
             .alert-danger {
                 color: #721c24;
-                background-color: #d4edda;
+                background-color: #f8d7da;
                 border-color: #f5c6cb;
             }
 
             .alert-info {
                 color: #0c5460;
-                background-color: #f8d7da;
+                background-color: #d1ecf1;
                 border-color: #bee5eb;
             }
 
@@ -86,5 +86,8 @@
             {# Bloco de conteúdo principal que outros templates vão preencher #}
             {% block content %}{% endblock %}
             
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            {% block scripts %}{% endblock %}
+
     </body>
 </html>

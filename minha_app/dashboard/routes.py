@@ -55,6 +55,33 @@ def view_dashboard():
 
     nome_mes_selecionado = f'{MONTH_OPTIONS[selected_month]} de {selected_year}'
 
+    #----- Lógica para o Gráfico -----
+    grafico_labels = []
+    grafico_data = []
+
+    hoje_grafico = date.today()
+
+    for i in range(5, -1, -1):
+        mes_iter = hoje_grafico.month - i
+        ano_iter = hoje_grafico.year
+        if mes_iter <= 0:
+            mes_iter += 12
+            ano_iter -= 1
+
+        grafico_labels.append(f"{MONTH_OPTIONS[mes_iter][:3]}/{str(ano_iter)[2:]}")
+
+        primeiro_dia = date(ano_iter, mes_iter, 1)
+        ultimo_dia = date(ano_iter, mes_iter, calendar.monthrange(ano_iter, mes_iter)[1])
+
+        total_mes = db.session.query(func.sum(Purchase.value)).filter(
+            Purchase.user_id == current_user.id,
+            Purchase.purchase_date >= primeiro_dia,
+            Purchase.purchase_date <= ultimo_dia
+        ).scalar() or 0
+
+        grafico_data.append(total_mes)
+    #----- Fim da lógica do gráfico -----
+
     return render_template('dashboard.html',
                            title='Meu Dashboard',
                            nome_mes_selecionado=nome_mes_selecionado,
@@ -63,4 +90,6 @@ def view_dashboard():
                            pagination=pagination,
                            month_options=MONTH_OPTIONS,
                            selected_month=selected_month,
-                           selected_year=selected_year)
+                           selected_year=selected_year,
+                           grafico_labels=grafico_labels,
+                           grafico_data=grafico_data)

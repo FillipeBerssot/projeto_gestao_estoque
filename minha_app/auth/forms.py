@@ -33,3 +33,19 @@ class ChangePasswordForm(FlaskForm):
     confirm_new_password = PasswordField('Confirmar Nova Senha',
                                          validators=[DataRequired(), EqualTo('new_password', message='As senhas não coincidem.')])
     submit_password = SubmitField('Alterar Senha')
+
+class RequestResetForm(FlaskForm):
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    submit = SubmitField('Solicitar Redefinição de Senha')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('Não existe uma conta com este email. Você pode se registrar primeiro.')
+        
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Nova Senha', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirmar Nova Senha',
+                                     validators=[DataRequired(), EqualTo('password', message='As senhas não coincidem.')])
+    submit = SubmitField('Redefinir Senha')

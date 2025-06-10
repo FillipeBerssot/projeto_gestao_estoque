@@ -1,3 +1,5 @@
+from flask import current_app
+from itsdangerous import URLSafeTimedSerializer as Serializer
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, timezone
@@ -11,6 +13,20 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     image_file = db.Column(db.String(20), nullable=False, server_default='default.jpg')
     purchases = db.relationship('Purchase', backref='buyer', lazy='dynamic')
+
+    # Método para Token
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({'user_id': self.id})
+    
+    @staticmethod
+    def verify_reset_token(token, expires_sec=1800):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token, max_age=expires_sec)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
 
     # Método para definir a senha(HASH)
     def set_password(self, password):

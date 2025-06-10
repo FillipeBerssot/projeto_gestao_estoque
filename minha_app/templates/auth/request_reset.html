@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <legend>Informe seu email de cadastro</legend>
+            <p>
+                {{ form.email.label }} <br>
+                {{ form.email(size=30) }}
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}
+                {% endif %}
+            </p>
+        </fieldset>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

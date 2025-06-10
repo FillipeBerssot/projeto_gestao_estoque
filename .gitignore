@@ -23,6 +23,9 @@ instance/
 .vscode/
 .idea/
 
+# Arquivos de varáveis de Ambiente
+.env
+
 # Arquivos de sistema operacional
 .DS_Store
 Thumbs.db

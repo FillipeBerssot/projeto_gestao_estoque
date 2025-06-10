@@ -6,9 +6,11 @@ from flask import current_app
 from .forms import UpdateAccountForm, ChangePasswordForm
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_mail import Message
 from . import auth_bp
 from ..models import User
-from .. import db
+from .. import db, mail
+from .forms import RequestResetForm, ResetPasswordForm
 
 
 def save_picture(form_picture):
@@ -28,6 +30,17 @@ def save_picture(form_picture):
             os.remove(old_picture_path)
 
     return picture_fn
+
+def send_reset_email(user):
+    token = user.get_reset_token()
+
+    msg = Message('Redefinição de Senha - Controle de Estoque',
+                  sender=os.environ.get('MAIL_USERNAME'),
+                  recipients=[user.email])
+    msg.body = render_template('email/reset_password.txt',
+                               user=user,
+                               token=token)
+    mail.send(msg)
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -129,3 +142,35 @@ def profile():
                            image_file=image_file,
                            update_form=update_form,
                            password_form=password_form)
+
+@auth_bp.route("/reset_password", methods=['GET', 'POST'])
+def request_reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard.view_dashboard'))
+    form = RequestResetForm()
+    
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('Um email com as instruções para redefinir sua senha foi enviado.', 'info')
+        return redirect(url_for('auth.login'))
+    return render_template('request_reset.html', title='Redefinir Senha', form=form)
+
+@auth_bp.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard.view_dashboard'))
+    
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash('O token é inválido ou expirou.', 'warning')
+        return redirect(url_for('auth.request_reset'))
+    
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Sua senha foi atualizada! Você já pode fazer o login.', 'success')
+        return redirect(url_for('auth.login'))
+    
+    return render_template('reset_password.html', title='Redefinir Senha', form=form)

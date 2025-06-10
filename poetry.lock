@@ -138,6 +138,22 @@ Flask = ">=1.0.4"
 Werkzeug = ">=1.0.1"
 
 [[package]]
+name = "flask-mail"
+version = "0.10.0"
+description = "Flask extension for sending email"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "flask_mail-0.10.0-py3-none-any.whl", hash = "sha256:a451e490931bb3441d9b11ebab6812a16bfa81855792ae1bf9c1e1e22c4e51e7"},
+    {file = "flask_mail-0.10.0.tar.gz", hash = "sha256:44083e7b02bbcce792209c06252f8569dd5a325a7aaa76afe7330422bd97881d"},
+]
+
+[package.dependencies]
+blinker = "*"
+flask = "*"
+
+[[package]]
 name = "flask-migrate"
 version = "4.1.0"
 description = "SQLAlchemy database migrations for Flask applications using Alembic."
@@ -579,6 +595,21 @@ files = [
 ]
 
 [[package]]
+name = "python-dotenv"
+version = "1.1.0"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "python_dotenv-1.1.0-py3-none-any.whl", hash = "sha256:d7c01d9e2293916c18baf562d95698754b0dbbb5e74d457c45d4f6561fb9d55d"},
+    {file = "python_dotenv-1.1.0.tar.gz", hash = "sha256:41f90bc6f5f177fb41f53e87666db362025010eb28f60a01c9143bfa33a2b2d5"},
+]
+
+[package.extras]
+cli = ["click (>=5.0)"]
+
+[[package]]
 name = "sqlalchemy"
 version = "2.0.41"
 description = "Database Abstraction Library"
@@ -725,4 +756,4 @@ email = ["email-validator"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "91d6f5f70a0da0d1fecd72d23ae4d9430bba406009d02ee2316e204129d271aa"
+content-hash = "aba4d101e8fd43959f3df055aa8b462c24d082ad41d87280d6b6f03f46f1d3c6"

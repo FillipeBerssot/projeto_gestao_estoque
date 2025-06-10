@@ -24,5 +24,7 @@
         </div>
 
     </form>
+    <br>
+    <p>Esqueceu sua senha? <a href="{{ url_for('auth.request_reset') }}">Clique aqui</a></p>
     <p>Não tem uma conta? <a href="{{ url_for('auth.register') }}">Registre-se aqui</a>.</p>
 {% endblock %}

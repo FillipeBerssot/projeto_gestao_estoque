@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <div style="display: flex; gap: 40px; align-items: flex-start;">
+        <div style="text-align: center;">
+            <img src="{{ image_file }}" alt="Foto de Perfil" style="width: 125px; height: 125px; border-radius: 50%; object-fit: cover;">
+            <h3>{{ current_user.username }}</h3>
+            <p>{{ current_user.email }}</p>
+        </div>
+
+        <div>
+            <form method="POST" action="" enctype="multipart/form-data">
+                {{ update_form.hidden_tag() }}
+                <fieldset>
+                    <legend>Informações da Conta</legend>
+                    <p>
+                        {{ update_form.username.label }} <br>
+                        {{ update_form.username(size=30)}}
+                        {% if update_form.username.errors %}{% for error in update_form.username.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
+                    </p>
+
+                    <p>
+                        {{ update_form.email.label }} <br>
+                        {{ update_form.email(size=30) }}
+                        {% if update_form.email.errors %}{% for error in update_form.email.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
+                    </p>
+
+                    <p>
+                        {{ update_form.picture.label }} <br>
+                        {{ update_form.picture }}
+                        {% if update_form.picture.errors %}{% for error in update_form.picture.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
+                    </p>
+                </fieldset>
+
+                <p>
+                    {{ update_form.submit_update }}
+                </p>
+            </form>
+
+            <hr>
+            <form method="POST" action="">
+                {{ password_form.hidden_tag() }}
+                <fieldset>
+                    <legend>Alterar Senha</legend>
+                    <p>
+                        {{ password_form.current_password.label }} <br>
+                        {{ password_form.current_password(size=30) }}
+                    </p>
+
+                    <p>
+                        {{ password_form.new_password.label }} <br>
+                        {{ password_form.new_password(size=30) }}
+                        {% if password_form.new_password.errors %}{% for error in password_form.new_password.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
+                    </p>
+
+                    <p>
+                        {{ password_form.confirm_new_password.label }} <br>
+                        {{ password_form.confirm_new_password(size=30) }}
+                        {% if password_form.confirm_new_password.errors %}{% for error in password_form.confirm_new_password.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
+                    </p>
+
+                </fieldset>
+                <p>
+                    {{ password_form.submit_password }}
+                </p>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}

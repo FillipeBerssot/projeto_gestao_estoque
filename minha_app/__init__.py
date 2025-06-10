@@ -1,13 +1,15 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
 
-# Inicializa as extensões (sem passar a app ainda)
+# Inicializa as extensões
 db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login' # Rota para login dentro do Blueprint 'auth'
 login_manager.login_message = "Por favor, faça login para acessar esta página."
 login_manager.login_message_category = "info"
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True) # instance_relative_config=True é importante
@@ -20,6 +22,7 @@ def create_app():
     # Inicializa as extensões com a aplicação
     db.init_app(app)
     login_manager.init_app(app)
+    migrate.init_app(app, db)
 
     # Importar modelos aqui é importante para o user_loader e para criar tabelas
     from .models import User
@@ -37,9 +40,5 @@ def create_app():
 
     from .dashboard import dashboard_bp
     app.register_blueprint(dashboard_bp)
-
-    # Criar tabelas do banco de dados (apenas se não existirem)
-    with app.app_context():
-        db.create_all()
 
     return app

@@ -9,6 +9,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, server_default='default.jpg')
     purchases = db.relationship('Purchase', backref='buyer', lazy='dynamic')
 
     # Método para definir a senha(HASH)

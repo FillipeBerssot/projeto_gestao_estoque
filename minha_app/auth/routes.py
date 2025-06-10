@@ -71,5 +71,5 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Voçê foi desconectado com sucesso!', 'info')
+    flash('Você foi desconectado com sucesso!', 'info')
     return redirect(url_for('dashboard.view_dashboard'))

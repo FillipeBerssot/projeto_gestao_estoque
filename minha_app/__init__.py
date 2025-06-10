@@ -28,8 +28,8 @@ def create_app():
     app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 
     # Configurações da aplicação (podemos mover para um config.py depois)
-    app.config['SECRET_KEY'] = 'minha_chave_secreta_muito_segura_12345'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///meu_controle_de_estoque.db'
+    app.config['SECRET_KEY'] = app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Inicializa as extensões com a aplicação

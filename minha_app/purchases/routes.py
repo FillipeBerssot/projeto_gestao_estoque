@@ -132,7 +132,7 @@ def export_csv():
     results = query.all()
 
     output = io.StringIO()
-    writer = csv.writer(output)
+    writer = csv.writer(output, delimiter=';')
 
     header = [
         'ID', 'Data da Compra', 'Nome do Produto', 'Marca', 'Quantidade',
@@ -149,16 +149,18 @@ def export_csv():
             purchase.brand,
             purchase.quantity,
             purchase.unit,
-            purchase.value,
+            str(purchase.value).replace('.',','),
             purchase.location,
             purchase.notes
         ]
         writer.writerow(row)
 
-    output.seek(0)
+    csv_data = output.getvalue()
+
+    encoded_csv_data = csv_data.encode('utf-8-sig')
 
     return Response(
-        output,
+        encoded_csv_data,
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=relatorio_compras.csv"}
     )

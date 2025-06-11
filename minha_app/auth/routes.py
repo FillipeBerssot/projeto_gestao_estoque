@@ -85,7 +85,7 @@ def register():
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('dashboard.view_dashboard'))
     
     if request.method == 'POST':
         username = request.form.get('username')

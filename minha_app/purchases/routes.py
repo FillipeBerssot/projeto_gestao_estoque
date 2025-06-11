@@ -74,7 +74,7 @@ def list_purchases():
 @purchases_bp.route('/edit/<int:purchase_id>', methods=['GET', 'POST'])
 @login_required
 def edit_purchase(purchase_id):
-    purchase_to_edit = Purchase.query.get_or_404(purchase_id)
+    purchase_to_edit = db.get_or_404(Purchase, purchase_id)
 
     if purchase_to_edit.buyer != current_user:
         flash('Operação não permitida. Você só pode editar suas próprias compras.', 'danger')
@@ -104,7 +104,7 @@ def edit_purchase(purchase_id):
 @purchases_bp.route('/delete/<int:purchase_id>', methods=['POST'])
 @login_required
 def delete_purchase(purchase_id):
-    purchase_to_delete = Purchase.query.get_or_404(purchase_id)
+    purchase_to_delete = db.get_or_404(Purchase, purchase_id)
 
     if purchase_to_delete.buyer != current_user:
         flash('Operação não permitida. Você só pode excluir suas próprias compras.', 'danger')

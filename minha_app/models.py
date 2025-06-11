@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     image_file = db.Column(db.String(20), nullable=False, server_default='default.jpg')
-    purchases = db.relationship('Purchase', backref='buyer', lazy='dynamic')
+    purchases = db.relationship('Purchase', backref='buyer', lazy='dynamic', cascade="all, delete-orphan")
 
     # Método para Token
     def get_reset_token(self, expires_sec=1800):

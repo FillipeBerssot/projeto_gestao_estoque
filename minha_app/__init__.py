@@ -1,4 +1,5 @@
 import os
+from config import config
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -17,20 +18,10 @@ login_manager.login_message_category = "info"
 migrate = Migrate()
 mail = Mail()
 
-def create_app():
-    app = Flask(__name__, instance_relative_config=True) # instance_relative_config=True é importante
+def create_app(config_name='default'):
+    app = Flask(__name__, instance_relative_config=False)
 
-    # CONFIGURAÇÕES PARA EMAIL
-    app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
-    app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-    app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
-    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-
-    # Configurações da aplicação (podemos mover para um config.py depois)
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config.from_object(config[config_name])
 
     # Inicializa as extensões com a aplicação
     db.init_app(app)

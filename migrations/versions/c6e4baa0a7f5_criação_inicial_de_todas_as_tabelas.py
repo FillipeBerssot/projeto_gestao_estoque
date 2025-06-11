@@ -1,8 +1,8 @@
-"""Criação inicial das tabelas User e Purchase
+"""Criação inicial de todas as tabelas
 
-Revision ID: 5f07f235c9ac
+Revision ID: c6e4baa0a7f5
 Revises: 
-Create Date: 2025-06-10 21:44:27.823129
+Create Date: 2025-06-11 17:25:27.865448
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5f07f235c9ac'
+revision = 'c6e4baa0a7f5'
 down_revision = None
 branch_labels = None
 depends_on = None

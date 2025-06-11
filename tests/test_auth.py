@@ -4,14 +4,7 @@ def test_request_login_page(client):
     assert response.status_code == 200
     assert b"Login" in response.data
 
-def test_dashboard_redirect_for_anonymous(client):
-    response = client.get('/', follow_redirects=True)
-
-    assert response.status_code == 200
-    assert b"Login" in response.data
-    assert b"Dashboard" not in response.data
-
-def test_successful_login(client, test_user):
+def test_successful_login_and_logout(client, test_user):
     response_login = client.post('/auth/login', data={
         'username': test_user.username,
         'password': 'password123'

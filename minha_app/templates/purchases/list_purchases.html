@@ -24,6 +24,10 @@
         {% endif %}
     </form>
 
+    <div style="margin-bottom: 20px;">
+        <a href="{{ url_for('purchases.export_csv', **request.args) }}">Exportar Resultados para CSV</a>
+    </div>
+
     {% if purchases %}
     <table border="1" style="width: 100%; border-collapse: collapse;">
         <thead>

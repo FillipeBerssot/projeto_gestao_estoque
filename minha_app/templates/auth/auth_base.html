@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %} - Gestão de Estoque</title>
+    <title>{% block title %}{% endblock %} - Gestão de Doces</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login_register.css') }}">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <style>
         body::before {
@@ -22,22 +24,39 @@
             z-index: -1;
         }
     </style>
-
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}" style="position: absolute; top: 20px; width: 80%; left: 10%; z-index: 1000; text-align: center; color: white; border-color: white;">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
     {% block content %}{% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    {% block scripts %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <script>
+                    {% for category, message in messages %}
+                        var iconType = '{{ category }}';
+                        if (iconType === 'danger') {
+                            iconType = 'error';
+                        }
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: iconType,
+                            title: '{{ message }}',
+                            showConfirmButton: false,
+                            timer: 4000,
+                            timerProgressBar: true,
+                            background: '#333', // Fundo escuro para combinar com o tema
+                            color: '#fff'       // Texto branco
+                        });
+                    {% endfor %}
+                </script>
+            {% endif %}
+        {% endwith %}
+    {% endblock %}
 
 </body>
 </html>

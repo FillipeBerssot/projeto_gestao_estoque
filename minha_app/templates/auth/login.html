@@ -1,30 +1,49 @@
-{% extends "base.html" %} {# Herda do template base #}
+{% extends "auth/auth_base.html" %}
+
+{% block body_class %}page-login{% endblock %}
 
 {% block title %}Login{% endblock %}
 
 {% block content %}
-    <h2>Login</h2>
+<div class="login-wrapper">
     <form method="POST" action="{{ url_for('auth.login') }}">
-        <div>
-            <label for="username">Nome de Usuário</label><br>
-            <input type="text" id="username" name="username" value="{{ request.form.username if request.form.username else ''}}" required>
+        {{ form.hidden_tag() }}
+
+        <h2>Login</h2>
+
+        <div class="input-field">
+            {{ form.email(required=True, placeholder=" ") }}
+            {{ form.email.label(text="Email") }}
+        </div>
+        {% if form.email.errors %}
+            <div class="invalid-feedback" style="color: #ffd1d1; text-align: left; font-size: 0.8em; margin-top: -10px; margin-bottom: 10px;">
+                {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="input-field">
+            {{ form.password(required=True, placeholder=" ") }}
+            {{ form.password.label(text="Senha") }}
+        </div>
+        {% if form.password.errors %}
+            <div class="invalid-feedback" style="color: #ffd1d1; text-align: left; font-size: 0.8em; margin-top: -10px; margin-bottom: 10px;">
+                {% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="password-options">
+            <label for="{{ form.remember.id }}">
+                {{ form.remember() }}
+                <p>Lembrar-me</p>
+            </label>
+            <a href="{{ url_for('auth.request_reset') }}">Esqueceu sua senha?</a>
         </div>
 
-        <br>
+        <button type="submit">Entrar</button>
 
-        <div>
-            <label for="password">Senha:</label><br>
-            <input type="password" id="password" name="password" required>
+        <div class="account-options">
+            <p>Não tem uma conta? <a href="{{ url_for('auth.register') }}">Registre-se</a></p>
         </div>
-
-        <br>
-
-        <div>
-            <button type="submit">Entrar</button>
-        </div>
-
     </form>
-    <br>
-    <p>Esqueceu sua senha? <a href="{{ url_for('auth.request_reset') }}">Clique aqui</a></p>
-    <p>Não tem uma conta? <a href="{{ url_for('auth.register') }}">Registre-se aqui</a>.</p>
+</div>
 {% endblock %}

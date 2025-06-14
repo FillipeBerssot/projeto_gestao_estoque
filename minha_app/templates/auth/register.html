@@ -1,41 +1,45 @@
-{% extends "base.html" %} {# Herda do nosso template base #}
+{% extends "auth/auth_base.html" %}
 
-{% block title %}Registrar Novo Usuário{% endblock %}
+{% block body_class %}page-register{% endblock %}
+
+{% block title %}Registrar{% endblock %}
 
 {% block content %}
-    <h2>Registrar Novo Usuário</h2>
+<div class="login-wrapper">
     <form method="POST" action="{{ url_for('auth.register') }}">
-        <div>
-            <label for="username">Nome de Usuário:</label><br>
-            <input type="text" id="username" name="username" required>
+        {{ form.hidden_tag() }}
+
+        <h2>Registrar</h2>
+
+        <div class="input-field">
+            {{ form.username(required=True, placeholder=" ") }}
+            {{ form.username.label(text="Nome de Usuário") }}
         </div>
+        {% if form.username.errors %}<div class="invalid-feedback" style="color: #ffd1d1; text-align: left; font-size: 0.8em; margin-top: -10px; margin-bottom: 10px;">{% for error in form.username.errors %}<span>{{ error }}</span>{% endfor %}</div>{% endif %}
 
-        <br>
-
-        <div>
-            <label for="email">Email:</label><br>
-            <input type="email" id="email" name="email" required>
+        <div class="input-field">
+            {{ form.email(required=True, placeholder=" ") }}
+            {{ form.email.label(text="Email") }}
         </div>
+        {% if form.email.errors %}<div class="invalid-feedback" style="color: #ffd1d1; text-align: left; font-size: 0.8em; margin-top: -10px; margin-bottom: 10px;">{% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}</div>{% endif %}
 
-        <br>
-
-        <div>
-            <label for="password">Senha:</label><br>
-            <input type="password" id="password" name="password" required>
+        <div class="input-field">
+            {{ form.password(required=True, placeholder=" ") }}
+            {{ form.password.label(text="Senha") }}
         </div>
+        {% if form.password.errors %}<div class="invalid-feedback" style="color: #ffd1d1; text-align: left; font-size: 0.8em; margin-top: -10px; margin-bottom: 10px;">{% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}</div>{% endif %}
 
-        <br>
-
-        <div>
-            <label for="confirm_password">Confirme a Senha:</label><br>
-            <input type="password" id="confirm_password" name="confirm_password" required>
+        <div class="input-field">
+            {{ form.confirm_password(required=True, placeholder=" ") }}
+            {{ form.confirm_password.label(text="Confirmar Senha") }}
         </div>
+        {% if form.confirm_password.errors %}<div class="invalid-feedback" style="color: #ffd1d1; text-align: left; font-size: 0.8em; margin-top: -10px; margin-bottom: 10px;">{% for error in form.confirm_password.errors %}<span>{{ error }}</span>{% endfor %}</div>{% endif %}
 
-        <br>
+        <button type="submit">Registrar</button>
 
-        <div>
-            <button type="submit">Registrar</button>
+        <div class="account-options">
+            <p>Já tem uma conta? <a href="{{ url_for('auth.login') }}">Login</a></p>
         </div>
-
     </form>
+</div>
 {% endblock %}

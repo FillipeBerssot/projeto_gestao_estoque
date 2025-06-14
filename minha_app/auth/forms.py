@@ -1,7 +1,7 @@
 from sqlalchemy import func
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, ValidationError, BooleanField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from flask_login import current_user
 from ..models import User
@@ -49,3 +49,30 @@ class ResetPasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirmar Nova Senha',
                                      validators=[DataRequired(), EqualTo('password', message='As senhas não coincidem.')])
     submit = SubmitField('Redefinir Senha')
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Nome de Usuário',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    password = PasswordField('Senha', validators=[DataRequired(), Length(min=6)])
+    confirm_password= PasswordField('Confirmar Senha',
+                            validators=[DataRequired(), EqualTo('password', message='As senhas não coincidem.')])
+    submit = SubmitField('Registrar')
+
+    def validate_username(self, username):
+        user = User.query.filter(func.lower(User.username) == func.lower(username.data)).first()
+        if user:
+            raise ValidationError('Este nome de usuário já está em uso. Por favor, escolha outro.')
+        
+    def validate_email(self, email):
+        user = User.query.filter(func.lower(User.email) == func.lower(email.data)).first()
+        if user:
+            raise ValidationError('Este email já está em uso. Por favor, escolha outro.')
+        
+class LoginForm(FlaskForm):
+    email = StringField('Email',
+                           validators=[DataRequired(), Email()])
+    password = PasswordField('Senha', validators=[DataRequired()])
+    remember = BooleanField('Lembrar-me')
+    submit = SubmitField('Entrar')

@@ -1,7 +1,5 @@
 {% extends "auth/auth_base.html" %}
 
-{% block title %}Solicitar Redefinição de Senha{% endblock %}
-
 {% block content %}
 <div class="login-wrapper">
     <form method="POST" action="{{ url_for('auth.request_reset') }}">

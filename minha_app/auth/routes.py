@@ -75,7 +75,7 @@ def login():
             flash('Login bem-sucedido!', 'success')
             return redirect(next_page or url_for('dashboard.view_dashboard'))
         else:
-            flash('Login sem sucesso. Por favor, verifique o email e a senha.', 'danger')
+            flash('Login inválido! Por favor, verifique o email e a senha.', 'danger')
 
     return render_template('auth/login.html', title='Login', form=form)
 

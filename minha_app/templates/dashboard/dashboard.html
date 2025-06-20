@@ -3,8 +3,20 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h2>{{ title }}</h2>
-    <p>Bem-vindo(a) de volta, {{ current_user.username }}!</p>
+
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h2 class="page-title mb-0 text-white">Meu Dashboard</h2>
+            <p class="text-white opacity-8 mb-0 page-subtitle">Bem-vindo, {{ current_user.username }}!</p>
+        </div>
+
+        <div class="col-auto">
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-dark mb-0">Sair</a>
+        </div>
+    </div>
+
+    <div class="row">
+      </div>
 
     {# Formulario de Filtro por Mês/Ano #}
     <form method="GET" action="{{ url_for('dashboard.view_dashboard') }}" style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">

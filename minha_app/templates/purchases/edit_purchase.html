@@ -3,7 +3,17 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h2>{{ title }}</h2>
+  {# ========================================================= #}
+  {# Bloco de Cabeçalho da Página                              #}
+  {# ========================================================= #}
+  <div class="row align-items-center mb-4">
+    <div class="col">
+        <h2 class="page-title mb-0 text-white">Editar Compras</h2>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-dark mb-0">Sair</a>
+    </div>
+  </div>
 
     {# A action do formulário agora aponta para a rota de edição e inclui o purchase_id #}
     <form method="POST" action="{{ url_for('purchases.edit_purchase', purchase_id=purchase_id) }}">

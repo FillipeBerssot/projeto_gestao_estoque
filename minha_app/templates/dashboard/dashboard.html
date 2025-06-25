@@ -9,11 +9,11 @@
     {# ========================================================= #}
     <div class="row align-items-center mb-4">
         <div class="col">
-            <h2 class="page-title mb-0 text-white">Meu Dashboard</h2>
-            <p class="text-white opacity-8 mb-0 page-subtitle">Bem-vindo(a), {{ current_user.username }}!</p>
+            <h2 class="page-title mb-0">Meu Dashboard</h2>
+            <p class="page-subtitle mb-0">Bem-vindo(a), {{ current_user.username }}!</p>
         </div>
         <div class="col-auto">
-            <a href="{{ url_for('auth.logout') }}" class="btn btn-dark mb-0">Sair</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-custom-secondary mb-0">Sair</a>
         </div>
     </div>
 
@@ -77,10 +77,12 @@
                             <input type="number" id="filter_year" name="filter_year" class="form-control" value="{{ selected_year }}">
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100 mb-0">Filtrar</button>
+                            <label class="form-label d-none d-md-block">&nbsp;</label>
+                            <button type="submit" class="btn bg-gradient-primary text-white w-100 mb-0">Filtrar</button>
                         </div>
                         <div class="col-md-2">
-                            <a href="{{ url_for('dashboard.view_dashboard') }}" class="btn btn-outline-secondary w-100 mb-0">Limpar</a>
+                            <label class="form-label d-none d-md-block">&nbsp;</label>
+                            <a href="{{ url_for('dashboard.view_dashboard') }}" class="btn btn-secondary w-100 mb-0">Limpar</a>
                         </div>
                     </form>
                 </div>

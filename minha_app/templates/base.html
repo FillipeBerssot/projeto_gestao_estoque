@@ -14,33 +14,53 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <style>
+        body.g-sidenav-show {
+            background-color: #371670 !important;
+        }
+
         .main-content .page-title {
+            color: #fff !important;
             font-size: 2.5rem;
             font-weight: 600;
-            margin-top: 5px;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
             text-shadow: 1px 1px 3px rgb(0, 0, 0, 0.4);
         }
 
-        .page-subtitle {
-         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        .main-content .page-subtitle {
+            color: #fff !important;
+            opacity: 0.8;
+            text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.5);
         }
 
-        .font-weight-bold {
-            font-size: 1rem;
+        .btn-custom-primary {
+            background-color: #fff;
+            border-color: #371670;
+            font-weight: bold;
+        }
+        .btn-custom-primary:hover {
+            background-color: #f0f2f5;
+            color: #371670;
+            border-color: #f0f2f5;
         }
 
-        .navbar-main .sidenav-toggler-inner .sidenav-toggler-line {
-        background-image: none !important;
-        background-color: #fff !important;
+        .btn-custom-secondary {
+            background-color: transparent;
+            border-color: #fff;
+            color: #fff;
+        }
+        .btn-custom-secondary:hover {
+            background-color: #fff;
+            color: #371670;
+        }
+
+        .pagination .page-item.active .page-link {
+            color: #fff !important;
         }
 
     </style>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
-
-    <div class="min-height-300 bg-dark position-absolute w-100"></div>
 
     <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4" id="sidenav-main">
         <div class="sidenav-header">

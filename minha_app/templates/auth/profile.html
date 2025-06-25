@@ -3,7 +3,18 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h2>{{ title }}</h2>
+    {# ========================================================= #}
+    {# Bloco de Cabeçalho da Página                              #}
+    {# ========================================================= #}
+    <div class="row align-items-center mb-4">
+    <div class="col">
+        <h2 class="page-title mb-0 text-white">Perfil</h2>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-dark mb-0">Sair</a>
+    </div>
+    </div> 
+
     <div style="display: flex; gap: 40px; align-items: flex-start;">
         <div style="text-align: center;">
             <img src="{{ image_file }}" alt="Foto de Perfil" style="width: 125px; height: 125px; border-radius: 50%; object-fit: cover;">

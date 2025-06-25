@@ -3,7 +3,17 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h2>{{ title }}</h2>
+    {# ========================================================= #}
+    {# Bloco de Cabeçalho da Página                              #}
+    {# ========================================================= #}
+    <div class="row align-items-center mb-4">
+    <div class="col">
+        <h2 class="page-title mb-0 text-white">Minhas Compras</h2>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-dark mb-0">Sair</a>
+    </div>
+    </div>
 
     {# Formulário de Filtro/Busca #}
     <form method="GET" action="{{ url_for('purchases.list_purchases')}}" style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">

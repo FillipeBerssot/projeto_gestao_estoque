@@ -3,160 +3,170 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+
     {# ========================================================= #}
     {# Bloco de Cabeçalho da Página                              #}
     {# ========================================================= #}
     <div class="row align-items-center mb-4">
-    <div class="col">
-        <h2 class="page-title mb-0 text-white">Minhas Compras</h2>
-    </div>
-    <div class="col-auto">
-        <a href="{{ url_for('auth.logout') }}" class="btn btn-dark mb-0">Sair</a>
-    </div>
-    </div>
-
-    {# Formulário de Filtro/Busca #}
-    <form method="GET" action="{{ url_for('purchases.list_purchases')}}" style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
-        <div style="display: inline-block; margin-right: 15px;">
-            <label for="search_product_name">Buscar por Nome do Produto:</label><br>
-            <input type="text" id="search_product_name" name="search_product_name" value="{{ search_term or '' }}">
+        <div class="col">
+            <h2 class="page-title mb-0">Minhas Compras</h2>
         </div>
-
-        {# NOVO CAMPO DE FILTRO POR DATA ESPECÍFICA #}
-        <div style="display: inline-block; margin-right: 15px;">
-            <label for="filter_date">Filtrar por Data Específica:</label><br>
-            <input type="date" id="filter_date" name="filter_date" value="{{ filter_date or ''}}">
+        <div class="col-auto">
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-custom-secondary mb-0">Sair</a>
         </div>
+    </div>
 
-        <button type="submit" style="vertical-align: bottom;">Buscar / Filtrar</button>
-        {% if search_term or filter_date_str %}
-            <a href="{{ url_for('purchases.list_purchases') }}" style="margin-left: 10px; vertical-align: bottom;">Limpar Filtros</a>
+    {# ========================================================= #}
+    {# Card para o Formulário de Filtro e Botão de Exportação    #}
+    {# ========================================================= #}
+    <div class="card mb-4">
+        <div class="card-header pb-0">
+            <h6>Filtros e Ações</h6>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('purchases.list_purchases')}}" class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label for="search_product_name" class="form-label">Buscar por Nome do Produto:</label>
+                    <input type="text" id="search_product_name" name="search_product_name" value="{{ search_term or '' }}" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label for="filter_date" class="form-label">Filtrar por Data Específica:</label>
+                    <input type="date" id="filter_date" name="filter_date" value="{{ filter_date_str or ''}}" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                    <button type="submit" class="btn bg-gradient-primary text-white w-100 mb-0">Buscar</button>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                    <a href="{{ url_for('purchases.list_purchases') }}" class="btn bg-gradient-primary text-white w-100 mb-0">Limpar</a>
+                </div>
+            </form>
+            <hr class="horizontal dark my-3">
+            <div class="d-flex justify-content-end">
+                <a href="{{ url_for('purchases.export_csv', **request.args.to_dict()) }}" class="btn btn-success mb-0">
+                    <i class="fas fa-file-csv me-2"></i>Exportar para CSV
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# ========================================================= #}
+    {# Card para a Tabela de Compras                             #}
+    {# ========================================================= #}
+    <div class="card">
+        <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+            <h6>Todas as Compras ({{ pagination.total }})</h6>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+            {% if purchases %}
+            <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Produto / Marca</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Qtd. / Un.</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Valor (R$)</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Data</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for purchase in purchases %}
+                        <tr>
+                            <td>
+                                <div class="d-flex px-3 py-1">
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <h6 class="mb-0 text-sm">{{ purchase.product_name }}</h6>
+                                        <p class="text-xs text-secondary mb-0">{{ purchase.brand if purchase.brand else 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">{{ purchase.quantity }} {{ purchase.unit }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-success text-sm font-weight-bold">R$ {{ "%.2f"|format(purchase.value) }}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-sm font-weight-bold">{{ purchase.purchase_date.strftime('%d/%m/%Y') }}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <a href="#" class="text-secondary mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalhes">
+                                    <img src="{{ url_for('static', filename='assets/img/icone-ver.png') }}" style="width: 22px; height: 22px;">
+                                </a>
+                                <a href="{{ url_for('purchases.edit_purchase', purchase_id=purchase.id) }}" class="text-secondary mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Compra">
+                                    <img src="{{ url_for('static', filename='assets/img/icone-editar.png') }}" style="width: 18px; height: 18px;">
+                                </a>
+                                <form action="{{ url_for('purchases.delete_purchase', purchase_id=purchase.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta compra?');">
+                                    <button type="submit" class="btn btn-link text-danger p-0 m-0 align-baseline" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir Compra">
+                                        <img src="{{ url_for('static', filename='assets/img/icone-lixeira.png') }}" style="width: 18px; height: 18px;">
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <div class="text-center p-3">
+                    <p>Nenhuma compra encontrada com os filtros atuais.</p>
+                    <a href="{{ url_for('purchases.list_purchases') }}" class="btn btn-sm btn-outline-primary mb-0">Limpar Filtros</a>
+                </div>
+            {% endif %}
+        </div>
+        {% if pagination and pagination.pages > 1 %}
+        <div class="card-footer pt-1 p-3 border-top d-flex justify-content-center">
+            <nav aria-label="Paginação">
+                <ul class="pagination pagination-primary mb-0">
+                    {# Link para Página Anterior (Corrigido) #}
+                    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                        {% set prev_args = request.args.to_dict() %}
+                        {% set _ = prev_args.update({'page': pagination.prev_num}) %}
+                        <a class="page-link" href="{{ url_for('purchases.list_purchases', **prev_args) if pagination.has_prev else '#' }}">
+                            &laquo;
+                        </a>
+                    </li>
+                
+                    {# Links para os Números (Corrigido) #}
+                    {% for p_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+                        {% if p_num %}
+                            {% set page_args = request.args.to_dict() %}
+                            {% set _ = page_args.update({'page': p_num}) %}
+                            <li class="page-item {% if pagination.page == p_num %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('purchases.list_purchases', **page_args) }}">
+                                    {{ p_num }}
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                        {% endif %}
+                    {% endfor %}
+                
+                    {# Link para Próxima Página (Corrigido) #}
+                    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                        {% set next_args = request.args.to_dict() %}
+                        {% set _ = next_args.update({'page': pagination.next_num}) %}
+                        <a class="page-link" href="{{ url_for('purchases.list_purchases', **next_args) if pagination.has_next else '#' }}">
+                            &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
         {% endif %}
-    </form>
-
-    <div style="margin-bottom: 20px;">
-        <a href="{{ url_for('purchases.export_csv', **request.args) }}">Exportar Resultados para CSV</a>
     </div>
 
-    {% if purchases %}
-    <table border="1" style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Produto</th>
-                <th>Marca</th>
-                <th>Quantidade</th>
-                <th>Unidade</th>
-                <th>Valor (R$)</th>
-                <th>Local</th>
-                <th>Observações</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
+{% endblock %}
 
-        <tbody>
-            {% for purchase in purchases %}
-            <tr>
-                <td>{{ purchase.purchase_date.strftime('%d/%m/%Y') if purchase.purchase_date else 'N/A' }}</td>
-                <td>{{ purchase.product_name }}</td>
-                <td>{{ purchase.brand if purchase.brand else '-' }}</td>
-                <td>{{ purchase.quantity }}</td>
-                <td>{{ purchase.unit }}</td>
-                <td>{{ "%.2f"|format (purchase.value) }}</td>
-                <td>{{ purchase.location if purchase.location else '-' }}</td>
-                <td>{{ purchase.notes if purchase.notes else '-' }}</td>
-                <td>
-                    <form method="GET" 
-                        action="{{ url_for('purchases.edit_purchase', purchase_id=purchase.id) }}"
-                        style="display: inline; margin-right: 5px; vertical-align: middle;">
-                        <input type="submit" value="Editar"
-                            style="background-color: #28a745;
-                                color: white; 
-                                padding: 2px 5px; 
-                                text-decoration: none;
-                                border-radius: 3px; 
-                                display: inline-block;
-                                border: none;
-                                cursor: pointer;
-                                vertical-align: middle;
-                                margin-right: 5px;">
-                    </form>
 
-                    <form method="POST"
-                        action="{{ url_for('purchases.delete_purchase', purchase_id=purchase.id) }}" 
-                        style="display: inline; vertical-align: middle;" 
-                        onsubmit="return confirm('Tem certeza que deseja excluir esta compra? Ela será removida permanentemente.');">
-                        {{ form.hidden_tag() if form and form.hidden_tag }}
-                        <input type="submit" value="Excluir" 
-                                style="background-color: #dc3545; 
-                                    color: white; 
-                                    border: none; 
-                                    padding: 2px 5px; 
-                                    text-decoration: none;
-                                    display: inline-block;
-                                    cursor: pointer;
-                                    vertical-align: middle;
-                                    border-radius: 3px;">
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-{% else %}
-    {% if search_term or filter_date_str %}
-        <p>Nenhuma compra encontrada com os filtros atuais que você aplicou.</p>
-        <p>Você pode tentar <a href="{{ url_for('purchases.list_purchases') }}">limpar os filtros</a> para ver todas as compras, ou <a href="{{ url_for('purchases.add_purchase') }}">adicionar uma nova compra</a>.</p>
-    {% else %}
-        <p>Você ainda não registrou nenhuma compra. Que tal <a href="{{ url_for('purchases.add_purchase') }}">adicionar sua primeira compra agora</a>?</p>    
-    {% endif %}
-{% endif %}
-
-    {# Paginação #}
-    {% if pagination %}
-    <nav aria-label="Paginação das Compras">
-        <ul class="pagination" style="list-style: none; display: flex; padding: 0;">
-
-            <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}" style="margin-right: 5px;">
-                <a class="page-link" href="{{ url_for('purchases.list_purchases', page=pagination.prev_num, search_product_name=search_term if search_term else None, filter_date=filter_date_str if filter_date_str else None) if pagination.has_prev else '#_prev' }}">
-                    &laquo; Anterior
-                </a>
-            </li>
-
-            {# Links para os Números das Páginas #}
-            {% for p_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-                {% if p_num %}
-                    {% if pagination.page == p_num %}
-                    <li class="page-item active" style="margin-right: 5px;">
-                        <a class="page-link" href="{{ url_for('purchases.list_purchases', page=p_num, search_product_name=search_term if search_term else None, filter_date=filter_date_str if filter_date_str else None) }}">{{ p_num }}</a>
-                    </li>
-                {% else %} {# Adicionando o else para as páginas não ativas #}
-                    <li class="page-item" style="margin-right: 5px;">
-                        <a class="page-link" href="{{ url_for('purchases.list_purchases', page=p_num, search_product_name=search_term if search_term else None, filter_date=filter_date_str if filter_date_str else None) }}">{{ p_num }}</a>
-                    </li>
-                    {% endif %}
-            
-                {% else %}
-                    <li class="page-item disabled" style="margin-right: 5px;"><span class="page-link">...</span></li>
-                {% endif %}
-            {% endfor %}
-
-            {# Link para a Próxima Página #}
-            <li class="page-item {% if not pagination.has_next %}disabled{% endif %}" style="margin-left: 5px;">
-                <a class="page-link" href="{{ url_for('purchases.list_purchases', page=pagination.next_num, search_product_name=search_term if search_term else None, filter_date=filter_date_str if filter_date_str else None) if pagination.has_next else '#_next' }}">
-                    Próxima &raquo;
-                </a>
-            </li>
-        </ul>
-    </nav>
-
-    <p style="font-size: 0.9em;">
-        Mostrando página {{ pagination.page }} de {{ pagination.pages }}. Total de {{ pagination.total }} compras.
-    </p>
-    {% endif %}
-
-    <br>
-
-    <p><a href="{{ url_for('purchases.add_purchase') }}">Adicionar Nova Compra</a></p>
+{% block scripts %}
+    {{ super() }}
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
 {% endblock %}

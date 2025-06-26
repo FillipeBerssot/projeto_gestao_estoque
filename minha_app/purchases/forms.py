@@ -5,16 +5,16 @@ from datetime import date
 
 class PurchaseForm(FlaskForm):
     product_name = StringField('Nome do Produto',
-                                validators=[DataRequired(), Length(min=2, max=100)])
+                                validators=[DataRequired(message="O nome do produto é obrigatório."), Length(min=2, max=100)])
     purchase_date = DateField('Data da Compra',
                                default=date.today,
-                               validators=[DataRequired()])
+                               validators=[DataRequired(message="A data da compra é obrigatória.")])
     value = FloatField('Valor Pago (R$)',
-                       validators=[DataRequired(), NumberRange(min=0.01, message='O valor deve ser positivo.')])
+                       validators=[DataRequired(message="O valor deve conter somente números. Utilize ponto para diferenciar reais de centavos"), NumberRange(min=0.01, message='O valor deve ser positivo.')])
     quantity = FloatField('Quantidade',
-                          validators=[DataRequired(), NumberRange(min=0.001, message='A quantiadade deve ser positiva.')])
+                          validators=[DataRequired(message="A quantidade deve conter somente números."), NumberRange(min=0.001, message='A quantiadade deve ser positiva.')])
     unit = StringField('Unidade (ex: kg, g, un, L, cx...)',
-                       validators=[DataRequired(), Length(max=50)])
+                       validators=[DataRequired(message="A unidade é obrigatória."), Length(max=50)])
     location = StringField('Local da Compra (Opcional)',
                            validators=[Length(max=100)])
     brand = StringField('Marca (Opcional)',

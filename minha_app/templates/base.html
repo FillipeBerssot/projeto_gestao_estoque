@@ -58,6 +58,10 @@
             color: #fff !important;
         }
 
+        .navbar-main .sidenav-toggler-inner .sidenav-toggler-line {
+        background-color: #fff !important;
+        }
+
     </style>
 </head>
 
@@ -147,21 +151,27 @@
 
     <script src="{{ url_for('static', filename='assets/js/argon-dashboard.min.js') }}"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
     {% block scripts %}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <script>
                     {% for category, message in messages %}
                         var iconType = '{{ category }}';
-                        if (iconType === 'danger') { iconType = 'error'; }
+                        if (iconType === 'danger') { 
+                            iconType = 'error'; 
+                        }
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
                             icon: iconType,
                             title: '{{ message }}',
                             showConfirmButton: false,
-                            timer: 3500,
-                            timerProgressBar: true
+                            timer: 4500,
+                            timerProgressBar: true,
+                            background: '#333', // Fundo escuro para combinar com o tema
+                            color: '#fff'       // Texto branco
                         });
                     {% endfor %}
                 </script>

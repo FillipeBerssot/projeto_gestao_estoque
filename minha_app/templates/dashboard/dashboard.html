@@ -72,18 +72,22 @@
                                 {% endfor %}
                             </select>
                         </div>
+
                         <div class="col-md-4">
                             <label for="filter_year" class="form-label">Ano:</label>
                             <input type="number" id="filter_year" name="filter_year" class="form-control" value="{{ selected_year }}">
                         </div>
+
                         <div class="col-md-2">
                             <label class="form-label d-none d-md-block">&nbsp;</label>
                             <button type="submit" class="btn bg-gradient-primary text-white w-100 mb-0">Filtrar</button>
                         </div>
+
                         <div class="col-md-2">
                             <label class="form-label d-none d-md-block">&nbsp;</label>
-                            <a href="{{ url_for('dashboard.view_dashboard') }}" class="btn btn-secondary w-100 mb-0">Limpar</a>
+                            <a href="{{ url_for('dashboard.view_dashboard') }}" class="btn bg-gradient-primary text-white w-100 mb-0">Limpar</a>
                         </div>
+                        
                     </form>
                 </div>
             </div>
@@ -137,6 +141,7 @@
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Produto</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Quantidade</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Unidade</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Valor</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Data</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Ações</th>
@@ -150,20 +155,33 @@
                                                     <h6 class="mb-0 text-sm">{{ compra.product_name }}</h6>
                                                 </div>
                                             </td>
+
                                             <td class="align-middle text-center text-sm">
-                                                <span class="text-secondary text-xs font-weight-bold">{{ compra.quantity }} {{ compra.unit }}</span>
+                                                <span class="text-secondary text-xs font-weight-bold">{{ compra.quantity }}</span>
                                             </td>
+
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="text-secondary text-xs font-weight-bold">{{ compra.unit }}</span>
+                                            </td>
+
                                             <td class="align-middle text-center">
                                                 <span class="text-success text-xs font-weight-bold">R$ {{ "%.2f"|format(compra.value) }}</span>
                                             </td>
+
                                             <td class="align-middle text-center text-sm">
                                                 <span class="text-secondary text-xs font-weight-bold">{{ compra.purchase_date.strftime('%d/%m/%y') }}</span>
                                             </td>
+
                                             <td class="align-middle">
-                                                <a href="{{ url_for('purchases.edit_purchase', purchase_id=compra.id) }}" class="text-secondary font-weight-bold text-xs ps-3" data-bs-toggle="tooltip" data-bs-title="Editar Compra">
-                                                  Editar
+                                                <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalhes">
+                                                    <img src="{{ url_for('static', filename='assets/img/icone-ver.png') }}" style="width: 22px; height: 22px;">
+                                                </a>
+                                                
+                                                <a href="{{ url_for('purchases.edit_purchase', purchase_id=compra.id) }}" class="ms-3" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Compra">
+                                                    <img src="{{ url_for('static', filename='assets/img/icone-editar.png') }}" style="width: 18px; height: 18px;">
                                                 </a>
                                             </td>
+                                            
                                         </tr>
                                     {% endfor %}
                                 </tbody>

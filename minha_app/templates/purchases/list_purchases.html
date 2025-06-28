@@ -82,22 +82,34 @@
                                     </div>
                                 </div>
                             </td>
+
                             <td class="align-middle text-center text-sm">
                                 <span class="text-secondary text-xs font-weight-bold">{{ purchase.quantity }} {{ purchase.unit }}</span>
                             </td>
+
                             <td class="align-middle text-center">
                                 <span class="text-success text-sm font-weight-bold">R$ {{ "%.2f"|format(purchase.value) }}</span>
                             </td>
+
                             <td class="align-middle text-center text-sm">
                                 <span class="text-secondary text-sm font-weight-bold">{{ purchase.purchase_date.strftime('%d/%m/%Y') }}</span>
                             </td>
+
                             <td class="align-middle text-center text-sm">
-                                <a href="#" class="text-secondary mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalhes">
+                                <a href="#" 
+                                class="text-secondary view-details-btn" 
+                                data-purchase-id="{{ purchase.id }}" 
+                                data-edit-url="{{ url_for('purchases.edit_purchase', purchase_id=purchase.id) }}"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top" 
+                                title="Ver Detalhes">
                                     <img src="{{ url_for('static', filename='assets/img/icone-ver.png') }}" style="width: 22px; height: 22px;">
                                 </a>
+
                                 <a href="{{ url_for('purchases.edit_purchase', purchase_id=purchase.id) }}" class="text-secondary mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Compra">
                                     <img src="{{ url_for('static', filename='assets/img/icone-editar.png') }}" style="width: 18px; height: 18px;">
                                 </a>
+
                                 <form action="{{ url_for('purchases.delete_purchase', purchase_id=purchase.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta compra?');">
                                     <button type="submit" class="btn btn-link text-danger p-0 m-0 align-baseline" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir Compra">
                                         <img src="{{ url_for('static', filename='assets/img/icone-lixeira.png') }}" style="width: 18px; height: 18px;">
@@ -158,8 +170,52 @@
         {% endif %}
     </div>
 
-{% endblock %}
+    {# ========================================================= #}
+    {# Modal Para Visualizar Detalhes da Compra                  #}
+    {# ========================================================= #}
 
+    <div class="modal fade" id="purchaseDetailsModal" tabindex="-1" aria-labelledby="purchaseDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="purchaseDetailsModalLabel">Detalhes da Compra</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Produto:</strong> <span id="modal-product-name"></span></li>
+
+                <li class="list-group-item"><strong>Data:</strong> <span id="modal-purchase-date"></span></li>
+
+                <li class="list-group-item"><strong>Valor:</strong> <span id="modal-value"></span></li>
+
+                <li class="list-group-item"><strong>Quantidade:</strong> <span id="modal-quantity"></span></li>
+
+                <li class="list-group-item"><strong>Unidade:</strong> <span id="modal-unity"></span></li>
+
+                <li class="list-group-item">
+                    <strong>Marca:</strong> 
+                    <p id="modal-brand" class="text-sm text-secondary mt-1 mb-0" style="word-wrap: break-word;"></p>
+
+                <li class="list-group-item">
+                    <strong>Local:</strong> 
+                    <p id="modal-location" class="text-sm text-secondary mt-1 mb-0" style="word-wrap: break-word;"></p>
+
+                <li class="list-group-item">
+                    <strong>Observações:</strong>
+                    <p id="modal-notes" class="text-sm text-secondary mt-1 mb-0" style="word-wrap: break-word;"></p>
+                </li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            <a href="#" id="modal-edit-button" class="btn btn-primary">Editar</a>
+        </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}
 
 {% block scripts %}
     {{ super() }}
@@ -169,4 +225,41 @@
           return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     </script>
+
+    <script>
+        // Pega o nosso "molde" de modal
+        var detailsModal = new bootstrap.Modal(document.getElementById('purchaseDetailsModal'));
+
+        // Adiciona um "ouvinte" para todos os botões/links com a classe 'view-details-btn'
+        document.querySelectorAll('.view-details-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Impede que o link '#' recarregue a página
+                
+                const purchaseId = this.dataset.purchaseId; // Pega o ID da compra do botão que foi clicado
+                const editUrl = this.dataset.editUrl; // Pega a URL de edição do botão
+
+                // Faz a requisição "silenciosa" para a nossa nova rota no Flask
+                fetch(`/purchases/purchase/details/${purchaseId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Quando os dados chegarem, preenchemos o nosso modal
+                        document.getElementById('modal-product-name').textContent = data.product_name;
+                        document.getElementById('modal-purchase-date').textContent = data.purchase_date;
+                        document.getElementById('modal-value').textContent = data.value;
+                        document.getElementById('modal-quantity').textContent = data.quantity;
+                        document.getElementById('modal-unity').textContent = data.unity;
+                        document.getElementById('modal-brand').textContent = data.brand;
+                        document.getElementById('modal-location').textContent = data.location;
+                        document.getElementById('modal-notes').textContent = data.notes;
+                        
+                        // Atualiza o link do botão "Editar" do modal
+                        document.getElementById('modal-edit-button').href = editUrl;
+
+                        // Mostra o modal
+                        detailsModal.show();
+                    });
+            });
+        });
+    </script>
+
 {% endblock %}

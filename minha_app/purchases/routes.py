@@ -1,6 +1,6 @@
 import csv
 import io
-from flask import render_template, redirect, url_for, flash, request, Response
+from flask import abort, render_template, redirect, url_for, flash, request, Response, jsonify
 from flask_login import login_required, current_user
 from . import purchases_bp
 from .forms import PurchaseForm
@@ -104,6 +104,26 @@ def edit_purchase(purchase_id):
                            title='Editar Compra',
                            form=form,
                            purchase_id=purchase_id)
+
+@purchases_bp.route('/purchase/details/<int:purchase_id>')
+@login_required
+def purchase_details(purchase_id):
+    purchase = db.get_or_404(Purchase, purchase_id)
+    if purchase.buyer != current_user:
+        abort(403)
+    
+    purchase_data = {
+        'product_name': purchase.product_name,
+        'purchase_date': purchase.purchase_date.strftime('%d/%m/%Y'),
+        'value': f'R$ {purchase.value:.2f}',
+        'quantity': f'{purchase.quantity}',
+        'unity': f'{purchase.unit}',
+        'brand': purchase.brand if purchase.brand else 'Não informado',
+        'location': purchase.location if purchase.location else 'Não informado',
+        'notes': purchase.notes if purchase.notes else 'Nenhuma observação.'
+    }
+    
+    return jsonify(purchase_data)
 
 @purchases_bp.route('/delete/<int:purchase_id>', methods=['POST'])
 @login_required

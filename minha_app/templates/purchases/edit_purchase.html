@@ -1,84 +1,145 @@
 {% extends "base.html" %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Editar Compra{% endblock %}
 
 {% block content %}
-  {# ========================================================= #}
-  {# Bloco de Cabeçalho da Página                              #}
-  {# ========================================================= #}
-  <div class="row align-items-center mb-4">
-    <div class="col">
-        <h2 class="page-title mb-0 text-white">Editar Compras</h2>
-    </div>
-    <div class="col-auto">
-        <a href="{{ url_for('auth.logout') }}" class="btn btn-dark mb-0">Sair</a>
-    </div>
-  </div>
 
-    {# A action do formulário agora aponta para a rota de edição e inclui o purchase_id #}
-    <form method="POST" action="{{ url_for('purchases.edit_purchase', purchase_id=purchase_id) }}">
-      {{ form.hidden_tag() }} {# Proteção CSRF #}
-  
-      {# Renderizando os campos do formulário (igual ao add_purchase.html) #}
-      <p>
-        {{ form.product_name.label }}<br>
-        {{ form.product_name(size=32, class="form-control") }}<br>
-        {% if form.product_name.errors %}
-          <ul class="errors">{% for error in form.product_name.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
-        {% endif %}
-      </p>
-      <p>
-        {{ form.purchase_date.label }}<br>
-        {{ form.purchase_date(class="form-control") }}<br>
-        {% if form.purchase_date.errors %}
-          <ul class="errors">{% for error in form.purchase_date.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
-        {% endif %}
-      </p>
-      <p>
-        {{ form.value.label }}<br>
-        {{ form.value(size=10, class="form-control") }}<br>
-        {% if form.value.errors %}
-          <ul class="errors">{% for error in form.value.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
-        {% endif %}
-      </p>
-      <p>
-        {{ form.quantity.label }}<br>
-        {{ form.quantity(size=10, class="form-control") }}<br>
-        {% if form.quantity.errors %}
-          <ul class="errors">{% for error in form.quantity.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
-        {% endif %}
-      </p>
-      <p>
-        {{ form.unit.label }}<br>
-        {{ form.unit(size=20, class="form-control") }}<br>
-        {% if form.unit.errors %}
-          <ul class="errors">{% for error in form.unit.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
-        {% endif %}
-      </p>
-      <p>
-        {{ form.location.label }}<br>
-        {{ form.location(size=32, class="form-control") }}<br>
-        {% if form.location.errors %}
-          <ul class="errors">{% for error in form.location.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
-        {% endif %}
-      </p>
-      <p>
-        {{ form.brand.label }}<br>
-        {{ form.brand(size=32, class="form-control") }}<br>
-        {% if form.brand.errors %}
-          <ul class="errors">{% for error in form.brand.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
-        {% endif %}
-      </p>        
-      <p>
-        {{ form.notes.label }}<br>
-        {{ form.notes(rows=4, cols=30, class="form-control") }}<br>
-        {% if form.notes.errors %}
-          <ul class="errors">{% for error in form.notes.errors %}<li><span style="color: red;">{{ error }}</span></li>{% endfor %}</ul>
-        {% endif %}
-      </p>
-      {# Mudamos o texto do botão de submit #}
-      <p>{{ form.submit(value="Salvar Alterações", class="btn btn-primary") }}</p>
-    </form>
-    <br>
-    <p><a href="{{ url_for('purchases.list_purchases') }}">Cancelar e Voltar para a Lista</a></p>
-  {% endblock %}
+    {# ========================================================= #}
+    {# Bloco de Cabeçalho da Página                              #}
+    {# ========================================================= #}
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h2 class="page-title mb-0">Editar Compra</h2>
+        </div>
+        <div class="col-auto">
+             <a href="{{ url_for('auth.logout') }}" class="btn btn-custom-secondary mb-0">Sair</a>
+        </div>
+    </div>
+
+    {# ========================================================= #}
+    {# Card Principal que envolve o Formulário                   #}
+    {# ========================================================= #}
+    <div class="card">
+        <div class="card-header pb-0">
+            <h6>Editando os dados da compra</h6>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('purchases.edit_purchase', purchase_id=purchase_id) }}">
+                {{ form.hidden_tag() }} {# Essencial para segurança do Flask-WTF #}
+
+                {# ========================================================= #}
+                {# Linha 1: Nome do Produto (Ocupa a linha inteira)        #}
+                {# ========================================================= #}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {{ form.product_name.label(class="form-control-label") }}
+                            {{ form.product_name(class="form-control" + (" is-invalid" if form.product_name.errors else "")) }}
+                            {% if form.product_name.errors %}
+                                <div class="invalid-feedback d-flex align-items-center">
+                                    <i class="fas fa-exclamation-circle me-2"></i> <span>{{ form.product_name.errors[0] }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# ========================================================= #}
+                {# Linha 2: Data e Valor (Lado a Lado)                     #}
+                {# ========================================================= #}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.purchase_date.label(class="form-control-label") }}
+                            {{ form.purchase_date(class="form-control" + (" is-invalid" if form.purchase_date.errors else "")) }}
+                            {% if form.purchase_date.errors %}<div class="invalid-feedback d-flex align-items-center"><i class="fas fa-exclamation-circle me-2"></i><span>{{ form.purchase_date.errors[0] }}</span></div>{% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.value.label(class="form-control-label") }}
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                {{ form.value(class="form-control" + (" is-invalid" if form.value.errors else ""), placeholder="Ex: 8.50") }}
+                                {% if form.value.errors %}
+                                    <div class="invalid-feedback d-flex align-items-center">
+                                        <i class="fas fa-exclamation-circle me-2"></i><span>{{ form.value.errors[0] }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# ========================================================= #}
+                {# Linha 3: Quantidade e Unidade (Lado a Lado)             #}
+                {# ========================================================= #}
+                <div class="row">
+                     <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.quantity.label(class="form-control-label") }}
+                            {{ form.quantity(class="form-control" + (" is-invalid" if form.quantity.errors else "")) }}
+                            {% if form.quantity.errors %}<div class="invalid-feedback d-flex align-items-center"><i class="fas fa-exclamation-circle me-2"></i><span>{{ form.quantity.errors[0] }}</span></div>{% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.unit.label(class="form-control-label") }}
+                            {{ form.unit(class="form-select" + (" is-invalid" if form.unit.errors else "")) }}
+                            {% if form.unit.errors %}<div class="invalid-feedback d-flex align-items-center"><i class="fas fa-exclamation-circle me-2"></i><span>{{ form.unit.errors[0] }}</span></div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# ========================================================= #}
+                {# Linha 4: Marca e Local (Opcionais, Lado a Lado)         #}
+                {# ========================================================= #}
+                 <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.brand.label(class="form-control-label") }}
+                            {{ form.brand(class="form-control" + (" is-invalid" if form.brand.errors else "")) }}
+                            {% if form.brand.errors %}<div class="invalid-feedback d-flex align-items-center"><i class="fas fa-exclamation-circle me-2"></i><span>{{ form.brand.errors[0] }}</span></div>{% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.location.label(class="form-control-label") }}
+                            {{ form.location(class="form-control" + (" is-invalid" if form.location.errors else "")) }}
+                            {% if form.location.errors %}<div class="invalid-feedback d-flex align-items-center"><i class="fas fa-exclamation-circle me-2"></i><span>{{ form.location.errors[0] }}</span></div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# ========================================================= #}
+                {# Linha 5: Observações (Opcional)                         #}
+                {# ========================================================= #}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {{ form.notes.label(class="form-control-label") }}
+                            {{ form.notes(class="form-control" + (" is-invalid" if form.notes.errors else ""), rows="3") }}
+                            {% if form.notes.errors %}<div class="invalid-feedback d-flex align-items-center"><i class="fas fa-exclamation-circle me-2"></i><span>{{ form.notes.errors[0] }}</span></div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                {# ========================================================= #}
+                {# Linha 6: Botões de Ação                                 #}
+                {# ========================================================= #}
+                <div class="row mt-4">
+                     <div class="col-md-12 text-end">
+                        <a href="{{ url_for('dashboard.view_dashboard') }}" class="btn btn-secondary me-2">Cancelar</a>
+                        {{ form.submit(value="Salvar Alterações", class="btn btn-primary") }}
+                     </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

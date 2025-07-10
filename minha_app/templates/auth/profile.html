@@ -1,84 +1,121 @@
 {% extends "base.html" %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Meu Perfil{% endblock %}
 
 {% block content %}
-    {# ========================================================= #}
-    {# Bloco de Cabeçalho da Página                              #}
-    {# ========================================================= #}
+
+    {# Bloco de Cabeçalho da Página #}
     <div class="row align-items-center mb-4">
-    <div class="col">
-        <h2 class="page-title mb-0 text-white">Perfil</h2>
+        <div class="col">
+            <h2 class="page-title mb-0 text-white">Meu Perfil</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-light mb-0">Sair</a>
+        </div>
     </div>
-    <div class="col-auto">
-        <a href="{{ url_for('auth.logout') }}" class="btn btn-dark mb-0">Sair</a>
-    </div>
-    </div> 
+    
+    <form method="POST" action="{{ url_for('auth.profile') }}" enctype="multipart/form-data" id="updateInfoForm">
+        {{ update_form.hidden_tag() }}
 
-    <div style="display: flex; gap: 40px; align-items: flex-start;">
-        <div style="text-align: center;">
-            <img src="{{ image_file }}" alt="Foto de Perfil" style="width: 125px; height: 125px; border-radius: 50%; object-fit: cover;">
-            <h3>{{ current_user.username }}</h3>
-            <p>{{ current_user.email }}</p>
+        {# Card de Cabeçalho do Perfil (agora dentro do form) #}
+        <div class="card shadow-lg">
+            <div class="card-body p-3">
+                <div class="row gx-4">
+                    <div class="col-auto">
+                        <div class="avatar avatar-xl position-relative">
+                            <img src="{{ image_file }}" alt="Foto de Perfil" class="w-100 border-radius-lg shadow-sm">
+                        </div>
+                    </div>
+                    <div class="col-auto my-auto">
+                        <div class="h-100">
+                            <h5 class="mb-1">{{ current_user.username }}</h5>
+                            <p class="mb-0 font-weight-bold text-sm">{{ current_user.email }}</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3 text-end">
+                        <label for="picture-upload" class="btn btn-sm btn-primary mb-0">Alterar Foto</label>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div>
-            <form method="POST" action="" enctype="multipart/form-data">
-                {{ update_form.hidden_tag() }}
-                <fieldset>
-                    <legend>Informações da Conta</legend>
-                    <p>
-                        {{ update_form.username.label }} <br>
-                        {{ update_form.username(size=30)}}
-                        {% if update_form.username.errors %}{% for error in update_form.username.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
-                    </p>
-
-                    <p>
-                        {{ update_form.email.label }} <br>
-                        {{ update_form.email(size=30) }}
-                        {% if update_form.email.errors %}{% for error in update_form.email.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
-                    </p>
-
-                    <p>
-                        {{ update_form.picture.label }} <br>
-                        {{ update_form.picture }}
-                        {% if update_form.picture.errors %}{% for error in update_form.picture.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
-                    </p>
-                </fieldset>
-
-                <p>
-                    {{ update_form.submit_update }}
-                </p>
-            </form>
-
-            <hr>
-            <form method="POST" action="">
-                {{ password_form.hidden_tag() }}
-                <fieldset>
-                    <legend>Alterar Senha</legend>
-                    <p>
-                        {{ password_form.current_password.label }} <br>
-                        {{ password_form.current_password(size=30) }}
-                    </p>
-
-                    <p>
-                        {{ password_form.new_password.label }} <br>
-                        {{ password_form.new_password(size=30) }}
-                        {% if password_form.new_password.errors %}{% for error in password_form.new_password.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
-                    </p>
-
-                    <p>
-                        {{ password_form.confirm_new_password.label }} <br>
-                        {{ password_form.confirm_new_password(size=30) }}
-                        {% if password_form.confirm_new_password.errors %}{% for error in password_form.confirm_new_password.errors %}<span style="color: red;">[{{ error }}]</span>{% endfor %}{% endif %}
-                    </p>
-
-                </fieldset>
-                <p>
-                    {{ password_form.submit_password }}
-                </p>
-            </form>
+        {# Card com os Campos de Edição (também dentro do form) #}
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Informações do Usuário</h6>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ update_form.username.label(class="form-control-label") }}
+                                    {{ update_form.username(class="form-control" + (" is-invalid" if update_form.username.errors else "")) }}
+                                    {% if update_form.username.errors %}<div class="invalid-feedback">{{ update_form.username.errors[0] }}</div>{% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ update_form.email.label(class="form-control-label") }}
+                                    {{ update_form.email(class="form-control" + (" is-invalid" if update_form.email.errors else "")) }}
+                                    {% if update_form.email.errors %}<div class="invalid-feedback">{{ update_form.email.errors[0] }}</div>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            {{ update_form.submit_update(class="btn btn-primary btn-sm") }}
+                            {{ update_form.picture(class="d-none", id="picture-upload", onchange="document.getElementById('updateInfoForm').submit()") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </form> <hr class="horizontal dark my-4">
 
+    {# Formulário de Alteração de Senha (é um formulário separado e independente) #}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Alterar Senha</h6>
+                    <form method="POST" action="{{ url_for('auth.profile') }}">
+                        {{ password_form.hidden_tag() }}
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {{ password_form.current_password.label(class="form-control-label") }}
+                                    {{ password_form.current_password(class="form-control" + (" is-invalid" if password_form.current_password.errors else "")) }}
+                                    {% if password_form.current_password.errors %}<div class="invalid-feedback">{{ password_form.current_password.errors[0] }}</div>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ password_form.new_password.label(class="form-control-label") }}
+                                    {{ password_form.new_password(class="form-control" + (" is-invalid" if password_form.new_password.errors else "")) }}
+                                    {% if password_form.new_password.errors %}<div class="invalid-feedback">{{ password_form.new_password.errors[0] }}</div>{% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ password_form.confirm_new_password.label(class="form-control-label") }}
+                                    {{ password_form.confirm_new_password(class="form-control" + (" is-invalid" if password_form.confirm_new_password.errors else "")) }}
+                                    {% if password_form.confirm_new_password.errors %}<div class="invalid-feedback">{{ password_form.confirm_new_password.errors[0] }}</div>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            {{ password_form.submit_password(class="btn btn-primary btn-sm") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
 {% endblock %}

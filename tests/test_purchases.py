@@ -28,6 +28,7 @@ def test_add_purchase_success_and_redirect(logged_in_client, app):
         assert purchase is not None
         assert purchase.product_name == 'Produto de Teste'
         assert purchase.value == 12.34
+        assert purchase.total_value == 12.34 * 2.5
 
 def test_add_purchase_shows_on_list(logged_in_client):
     nome_do_produto_teste = 'Leite Condensado Teste'
@@ -69,6 +70,7 @@ def test_edit_purchase(logged_in_client, app, test_user):
         edited_purchase = db.session.get(Purchase, purchase_id)
         assert edited_purchase.product_name == 'Produto Editado'
         assert edited_purchase.value == 99.99
+        assert edited_purchase.total_value == 99.99 * 5
 
 def test_delete_purchase(logged_in_client, app, test_user):
     with app.app_context():

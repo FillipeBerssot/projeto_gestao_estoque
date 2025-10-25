@@ -85,8 +85,12 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Este email já está em uso. Por favor, escolha outro.')
         
 class UpdatePictureForm(FlaskForm):
-    picture = FileField('Atualizar Foto de Perfil',
-                        validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
+    picture = FileField(
+        'Atualizar Foto de Perfil',
+        validators=[
+            FileAllowed(['jpg', 'png', 'jpeg', 'webp'],'Imagens apenas!')],
+        render_kw={'accpet': 'image/jpeg,image/png,image/webp', 'id': 'picture-upload', 'class': 'd-none'}
+    )
     submit_picture = SubmitField('Atualizar Foto')
         
 class LoginForm(FlaskForm):

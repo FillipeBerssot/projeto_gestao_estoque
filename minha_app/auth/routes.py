@@ -3,7 +3,7 @@ import secrets
 from sqlalchemy import func
 from PIL import Image
 from flask import current_app
-from .forms import UpdateAccountForm, ChangePasswordForm
+from .forms import UpdateAccountForm, ChangePasswordForm, UpdatePictureForm
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
@@ -19,10 +19,10 @@ def save_picture(form_picture):
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(current_app.root_path, 'static/profile_pics', picture_fn)
 
-    output_size = (125, 125)
-    i = Image.open(form_picture)
+    output_size = (400, 400)
+    i = Image.open(form_picture).convert("RGB")
     i.thumbnail(output_size)
-    i.save(picture_path)
+    i.save(picture_path, format='JPEG', quality=85)
 
     if current_user.image_file != 'default.jpg':
         old_picture_path = os.path.join(current_app.root_path, 'static/profile_pics', current_user.image_file)
@@ -91,32 +91,52 @@ def logout():
 def profile():
     update_form = UpdateAccountForm(obj=current_user)
     password_form = ChangePasswordForm()
+    picture_form = UpdatePictureForm()
 
-    if password_form.validate_on_submit() and 'submit_password' in request.form:
-        if current_user.check_password(password_form.current_password.data):
+    if picture_form.picture.data and picture_form.validate_on_submit():
+        picture_file = save_picture(picture_form.picture.data)
+        current_user.image_file = picture_file
+        db.session.commit()
+        flash('Sua foto de perfil foi atualizada!', 'success')
+        return redirect(url_for('auth.profile'))
+
+    is_password_post = (
+        request.method == 'POST' and (
+            password_form.current_password.name in request.form or
+            password_form.new_password.name in request.form or
+            password_form.confirm_new_password.name in request.form or
+            'submit_password' in request.form
+        )
+    )
+
+    if is_password_post:
+        is_valid = password_form.validate_on_submit()
+        if is_valid and not current_user.check_password(password_form.current_password.data):
+            password_form.current_password.errors.append('Senha atual incorreta.')
+            is_valid = False
+        if is_valid:
             current_user.set_password(password_form.new_password.data)
             db.session.commit()
-            flash('Sua senha foi alterada com sucesso!', 'success')
+            flash('Senha alterada com sucesso!', 'success')
             return redirect(url_for('auth.profile'))
         else:
-            flash('Senha atual incorreta. Por favor, tente novamente.', 'danger')
-            
-    elif update_form.validate_on_submit() and 'submit_update' in request.form:
-        if update_form.picture.data:
-            picture_file = save_picture(update_form.picture.data)
-            current_user.image_file = picture_file
-        
+            flash('Corrija os erros destacados abaixo.', 'danger')
+
+    elif 'submit_update' in request.form and update_form.validate_on_submit():        
         current_user.username = update_form.username.data
         current_user.email = update_form.email.data
         db.session.commit()
         flash('Sua conta foi atualizada!', 'success')
         return redirect(url_for('auth.profile'))
-
+    
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('profile.html', title='Perfil',
-                           image_file=image_file,
-                           update_form=update_form,
-                           password_form=password_form)
+    return render_template(
+        'auth/profile.html', 
+        title='Perfil',
+        image_file=image_file,
+        update_form=update_form,
+        password_form=password_form,
+        picture_form=picture_form)
 
 @auth_bp.route("/reset_password", methods=['GET', 'POST'])
 def request_reset():

@@ -11,8 +11,6 @@ class UpdateAccountForm(FlaskForm):
                            validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
-    picture = FileField('Atualizar Foto de Perfil',
-                        validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
     submit_update = SubmitField('Atualizar Dados')
 
     def validate_username(self, username):
@@ -28,10 +26,26 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('Este email já está em uso. Por favor, escolha outro.')
             
 class ChangePasswordForm(FlaskForm):
-    current_password = PasswordField('Senha Atual', validators=[DataRequired()])
-    new_password = PasswordField('Nova Senha', validators=[DataRequired(), Length(min=6)])
-    confirm_new_password = PasswordField('Confirmar Nova Senha',
-                                         validators=[DataRequired(), EqualTo('new_password', message='As senhas não coincidem.')])
+    current_password = PasswordField(
+        'Senha Atual', 
+        validators=[DataRequired(message='Informe sua senha atual.')]
+        )
+    new_password = PasswordField(
+        'Nova Senha', 
+        validators=[
+            DataRequired(message='Informe a nova senha.'), 
+            Length(min=6, message='A nova senha deve ter pelo menos 6 caracteres.')
+        ],
+        render_kw={'autocomplete': 'new-password'}
+    )
+    confirm_new_password = PasswordField(
+        'Confirmar Nova Senha',
+        validators=[
+            DataRequired(message='Confirme a nova senha.'), 
+            EqualTo('new_password', message='A confirmação não corresponde à nova senha.')
+            ],
+            render_kw={'autocomplete': 'new-password'}
+    )
     submit_password = SubmitField('Alterar Senha')
 
 class RequestResetForm(FlaskForm):
@@ -69,6 +83,11 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter(func.lower(User.email) == func.lower(email.data)).first()
         if user:
             raise ValidationError('Este email já está em uso. Por favor, escolha outro.')
+        
+class UpdatePictureForm(FlaskForm):
+    picture = FileField('Atualizar Foto de Perfil',
+                        validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
+    submit_picture = SubmitField('Atualizar Foto')
         
 class LoginForm(FlaskForm):
     email = StringField('Email',

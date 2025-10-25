@@ -10,36 +10,45 @@
             <h2 class="page-title mb-0 text-white">Meu Perfil</h2>
         </div>
         <div class="col-auto">
-            <a href="{{ url_for('auth.logout') }}" class="btn btn-light mb-0">Sair</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-custom-secondary mb-0">Sair</a>
         </div>
     </div>
-    
-    <form method="POST" action="{{ url_for('auth.profile') }}" enctype="multipart/form-data" id="updateInfoForm">
-        {{ update_form.hidden_tag() }}
 
-        {# Card de Cabeçalho do Perfil (agora dentro do form) #}
-        <div class="card shadow-lg">
-            <div class="card-body p-3">
-                <div class="row gx-4">
-                    <div class="col-auto">
-                        <div class="avatar avatar-xl position-relative">
-                            <img src="{{ image_file }}" alt="Foto de Perfil" class="w-100 border-radius-lg shadow-sm">
-                        </div>
+    {# Card de Cabeçalho do Perfil #}
+    <div class="card shadow-lg">
+        <div class="card-body p-3">
+            <div class="row gx-4 align-items-center">
+                <div class="col-auto">
+                    <div class="avatar avatar-xl position-relative">
+                        <img id="profile-photo"
+                            src="{{ image_file }}"
+                            alt="Foto de Pefil"
+                            class="w-100 h-100 border-raidus-lg shadow-sm"
+                            style="object-fit:cover;">
                     </div>
-                    <div class="col-auto my-auto">
-                        <div class="h-100">
-                            <h5 class="mb-1">{{ current_user.username }}</h5>
-                            <p class="mb-0 font-weight-bold text-sm">{{ current_user.email }}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3 text-end">
-                        <label for="picture-upload" class="btn btn-sm btn-primary mb-0">Alterar Foto</label>
-                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                    <form id="picture-form"
+                          method="POST"
+                          action="{{ url_for('auth.profile') }}"
+                          enctype="multipart/form-data"
+                          class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
+                    {{ picture_form.hidden_tag() }}
+                    <label for="picture-upload" class="btn btn-primary btn-sm">Escolher Foto</label>
+
+                    {# Aceita apenas formatos comuns #}
+                    {{ picture_form.picture(class="d-none", id="picture-upload", accept="image/jpeg,image/png,image/webp") }}
+                    {{ picture_form.submit_picture(class="d-none") }}
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
-        {# Card com os Campos de Edição (também dentro do form) #}
+    <form method="POST" action="{{ url_for('auth.profile') }}" id="updateInfoForm">
+        {{ update_form.hidden_tag() }}
+
+        {# Card com os Campos de Edição #}
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
@@ -63,7 +72,7 @@
                         </div>
                         <div class="text-end">
                             {{ update_form.submit_update(class="btn btn-primary btn-sm") }}
-                            {{ update_form.picture(class="d-none", id="picture-upload", onchange="document.getElementById('updateInfoForm').submit()") }}
+
                         </div>
                     </div>
                 </div>
@@ -77,13 +86,15 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Alterar Senha</h6>
-                    <form method="POST" action="{{ url_for('auth.profile') }}">
+
+                    <form method="POST" action="{{ url_for('auth.profile') }}" novalidate>
                         {{ password_form.hidden_tag() }}
+
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     {{ password_form.current_password.label(class="form-control-label") }}
-                                    {{ password_form.current_password(class="form-control" + (" is-invalid" if password_form.current_password.errors else "")) }}
+                                    {{ password_form.current_password(class="form-control" + (" is-invalid" if password_form.current_password.errors else ""), autocomplete="current_password") }}
                                     {% if password_form.current_password.errors %}<div class="invalid-feedback">{{ password_form.current_password.errors[0] }}</div>{% endif %}
                                 </div>
                             </div>
@@ -92,14 +103,14 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     {{ password_form.new_password.label(class="form-control-label") }}
-                                    {{ password_form.new_password(class="form-control" + (" is-invalid" if password_form.new_password.errors else "")) }}
+                                    {{ password_form.new_password(class="form-control" + (" is-invalid" if password_form.new_password.errors else ""), autocomplete="new-password") }}
                                     {% if password_form.new_password.errors %}<div class="invalid-feedback">{{ password_form.new_password.errors[0] }}</div>{% endif %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     {{ password_form.confirm_new_password.label(class="form-control-label") }}
-                                    {{ password_form.confirm_new_password(class="form-control" + (" is-invalid" if password_form.confirm_new_password.errors else "")) }}
+                                    {{ password_form.confirm_new_password(class="form-control" + (" is-invalid" if password_form.confirm_new_password.errors else ""), autocomplete="new-password") }}
                                     {% if password_form.confirm_new_password.errors %}<div class="invalid-feedback">{{ password_form.confirm_new_password.errors[0] }}</div>{% endif %}
                                 </div>
                             </div>
@@ -118,4 +129,44 @@
 
 {% block scripts %}
     {{ super() }}
+    <script>
+    (function () {
+      const input = document.getElementById('picture-upload');
+      const form  = document.getElementById('picture-form');
+      const img   = document.getElementById('profile-photo');
+
+      // limite de 2MB (ajuste se quiser). Você pode sincronizar com MAX_CONTENT_LENGTH no backend.
+      const MAX_MB = 2;
+      const MAX_BYTES = MAX_MB * 1024 * 1024;
+      const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
+
+      if (!input || !form || !img) return;
+
+      input.addEventListener('change', () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+
+        // valida tipo
+        if (!ALLOWED.includes(file.type)) {
+          alert('Formato inválido. Use JPG, PNG ou WEBP.');
+          input.value = '';
+          return;
+        }
+
+        // valida tamanho
+        if (file.size > MAX_BYTES) {
+          alert(`Arquivo muito grande. Máximo: ${MAX_MB}MB.`);
+          input.value = '';
+          return;
+        }
+
+        // preview imediato
+        const url = URL.createObjectURL(file);
+        img.src = url;
+
+        // envia o formulário automaticamente
+        form.submit();
+      });
+    })();
+  </script>
 {% endblock %}

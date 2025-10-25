@@ -37,7 +37,7 @@ def view_dashboard():
         Purchase.purchase_date <= ultimo_dia_mes
     )
 
-    total_gasto_mes = db.session.query(db.func.sum(Purchase.value)).filter(
+    total_gasto_mes = db.session.query(db.func.sum(Purchase.value * Purchase.quantity)).filter(
         Purchase.user_id == current_user.id,
         Purchase.purchase_date >= primeiro_dia_mes,
         Purchase.purchase_date <= ultimo_dia_mes
@@ -73,7 +73,7 @@ def view_dashboard():
         primeiro_dia = date(ano_iter, mes_iter, 1)
         ultimo_dia = date(ano_iter, mes_iter, calendar.monthrange(ano_iter, mes_iter)[1])
 
-        total_mes = db.session.query(func.sum(Purchase.value)).filter_by(buyer=current_user).filter(
+        total_mes = db.session.query(func.sum(Purchase.value * Purchase.quantity)).filter_by(buyer=current_user).filter(
             Purchase.purchase_date >= primeiro_dia,
             Purchase.purchase_date <= ultimo_dia
         ).scalar() or 0

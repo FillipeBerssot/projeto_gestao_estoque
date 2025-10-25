@@ -66,7 +66,7 @@
                         <tr>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Produto / Marca</th>
                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Qtd. / Un.</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Valor (R$)</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Valor Total (R$)</th>
                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Data</th>
                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ações</th>
                         </tr>
@@ -88,7 +88,7 @@
                             </td>
 
                             <td class="align-middle text-center">
-                                <span class="text-success text-sm font-weight-bold">R$ {{ "%.2f"|format(purchase.value) }}</span>
+                                <span class="text-success text-sm font-weight-bold">R$ {{ "%.2f"|format(purchase.total_value) }}</span>
                             </td>
 
                             <td class="align-middle text-center text-sm">
@@ -187,7 +187,9 @@
 
                 <li class="list-group-item"><strong>Data:</strong> <span id="modal-purchase-date"></span></li>
 
-                <li class="list-group-item"><strong>Valor:</strong> <span id="modal-value"></span></li>
+                <li class="list-group-item"><strong>Valor Total:</strong> <span id="modal-total-value"></span></li>
+
+                <li class="list-group-item"><strong>Preço Unitário:</strong> <span id="modal-unit-value"></span></li>
 
                 <li class="list-group-item"><strong>Quantidade:</strong> <span id="modal-quantity"></span></li>
 
@@ -245,7 +247,8 @@
                         // Quando os dados chegarem, preenchemos o nosso modal
                         document.getElementById('modal-product-name').textContent = data.product_name;
                         document.getElementById('modal-purchase-date').textContent = data.purchase_date;
-                        document.getElementById('modal-value').textContent = data.value;
+                        document.getElementById('modal-total-value').textContent = data.value;
+                        document.getElementById('modal-unit-value').textContent = data.unit_value;
                         document.getElementById('modal-quantity').textContent = data.quantity;
                         document.getElementById('modal-unity').textContent = data.unity;
                         document.getElementById('modal-brand').textContent = data.brand;

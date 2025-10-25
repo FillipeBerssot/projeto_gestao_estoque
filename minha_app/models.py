@@ -52,5 +52,11 @@ class Purchase(db.Model):
     notes = db.Column(db.Text, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
+    @property
+    def total_value(self):
+        value = self.value or 0
+        quantity = self.quantity or 0
+        return value * quantity
+
     def __repr__(self):
-        return f'<Purchase {self.product_name} -R${self.value:.2f}>'
+        return f'<Purchase {self.product_name} -R${self.total_value:.2f}>'

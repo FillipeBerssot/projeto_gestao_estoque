@@ -9,7 +9,7 @@ class PurchaseForm(FlaskForm):
     purchase_date = DateField('Data da Compra',
                                default=date.today,
                                validators=[DataRequired(message="A data da compra é obrigatória.")])
-    value = FloatField('Valor Pago (R$)',
+    value = FloatField('Preço Unitário (R$)',
                        validators=[DataRequired(message="O valor deve conter somente números. Utilize ponto para diferenciar reais de centavos"), NumberRange(min=0.01, message='O valor deve ser positivo.')])
     quantity = FloatField('Quantidade',
                           validators=[DataRequired(message="A quantidade deve conter somente números."), NumberRange(min=0.001, message='A quantiadade deve ser positiva.')])

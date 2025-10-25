@@ -115,7 +115,8 @@ def purchase_details(purchase_id):
     purchase_data = {
         'product_name': purchase.product_name,
         'purchase_date': purchase.purchase_date.strftime('%d/%m/%Y'),
-        'value': f'R$ {purchase.value:.2f}',
+        'value': f'R$ {purchase.total_value:.2f}',
+        'unit_value': f'R$ {purchase.value:.2f}',
         'quantity': f'{purchase.quantity}',
         'unity': f'{purchase.unit}',
         'brand': purchase.brand if purchase.brand else 'Não informado',
@@ -156,7 +157,7 @@ def export_csv():
 
     header = [
         'ID', 'Data da Compra', 'Nome do Produto', 'Marca', 'Quantidade',
-        'Unidade', 'Valor (R$)', 'Local', 'Observações'
+        'Unidade', 'Valor Total (R$)', 'Preço Unitário (R$)', 'Local', 'Observações'
     ]
 
     writer.writerow(header)
